@@ -1,0 +1,75 @@
+.logo-txt {
+    color: #EE8232;
+}
+
+body {
+    @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.top-nav {
+    font-size: 10pt;
+    color: #555555;
+    margin-left: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.size-10 {
+    font-size: 10pt;
+}
+
+.size-11 {
+    font-size: 11pt;
+}
+
+.size-12 {
+    font-size: 12pt;
+}
+.size-13 {
+    font-size: 13pt;
+}
+.size-14 {
+    font-size: 14pt;
+}
+.size-15 {
+    font-size: 15pt;
+}
+
+.nav-item{
+    color: #555555;
+    cursor: pointer;
+}
+
+.footer-txt {
+    color: #787878;
+    font-size: 10pt;
+    margin-bottom: 2.5px;
+    margin-top: 2.5px;
+}
+
+.footer-h {
+    color: #555555;
+}
+
+a {
+text-decoration: none;
+}
+
+.title {
+    font-size: 20pt;
+    color: #222222;
+}
+
+.signup-label {
+    color: #555555;
+    font-size: 14pt;
+}
+
+pre {
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: -pre-wrap; /* Opera */
+    white-space: -o-pre-wrap; /* Opera */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+    word-wrap: break-word; /* IE 5.5+ */
+}

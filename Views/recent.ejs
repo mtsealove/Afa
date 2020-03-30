@@ -1,0 +1,17 @@
+<script>
+    $(function () {
+        setRecentLocation();
+        $(window).resize(function(){
+            setRecentLocation();
+        })
+    });
+
+    function setRecentLocation() {
+        const recentHeight=$('#recent').height();
+        const y=($(window).height()-recentHeight)/2;
+        $('#recent').offset({top:y});
+    }
+</script>
+<div id="recent">
+
+</div>

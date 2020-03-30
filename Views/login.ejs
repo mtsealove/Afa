@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>로그인</title>
+    <%- include('config')%>
+    <script>
+        $(function() {
+            setBtns();
+        });
+
+        function setBtns() {
+            $('#sign-up-btn').click(function() {
+                location.href='/SignUp';
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('top')%>
+    <section class="center">
+        <br><br><br>
+        <p class="title">로그인</p>
+        <div id="login-div">
+            <input class="normal size-11" placeholder="이메일을 입력해주세요." type="email">
+            <input class="normal size-11" placeholder="비밀번호를 입력해주세요." style="margin-top: 10px;" type="password">
+            <br>
+            <div class="horizontal between" style="width: 100%;margin-top: 5px;">
+                <label></label>
+                <div class="horizontal">
+                    <a class="top-nav">아이디 찾기</a>
+                    <label class=" top-nav">|</label>
+                    <a class="top-nav">비밀번호 찾기</a>
+                </div>
+            </div>
+            <br>
+            <button type="button" class=" btn-main btn-block">로그인</button>
+            <button type="button" class=" btn-sec btn-block" style="margin-top: 5px;" id="sign-up-btn">회원가입</button>
+            <button type="button" class=" btn-trd btn-block" style="margin-top: 5px;">생산자 로그인</button>
+        </div>
+        <br><br><br><br><br><br><br>
+    </section>
+    <%-include('footer') %>
+</body>
+
+</html>

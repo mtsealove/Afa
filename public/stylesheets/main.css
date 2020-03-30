@@ -1,0 +1,245 @@
+.horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.between {
+    justify-content: space-between;
+}
+
+#location {
+    border: 1px solid #EBEBEB;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-main {
+    background-color: #F9F9F9;
+}
+
+.search-box {
+    background-color: white;
+    border-radius: 20px;
+    padding: 5px 10px 5px 10px;
+}
+
+.trasparent {
+    background: transparent;
+    border: none;
+}
+
+footer {
+    width: 100%;
+}
+
+body {
+    width: 100vw;
+}
+
+.footer-top {
+    background-color: #EBEBEB;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.footer-bottom {
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.normal {
+    background-color: white;
+    border: 1px solid #D3D3D3;
+    border-radius: 5px;
+    padding: 12px;
+    width: 100%;
+    font-size: 12pt;
+    -webkit-box-sizing: border-box;
+    /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;
+    /* Firefox, other Gecko */
+    box-sizing: border-box;
+}
+
+input::placeholder {
+    color: #AAAAAA;
+}
+
+.input-line {
+    background-color: transparent;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding: 15px;
+    font-size: 12pt;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;
+    /* Firefox, other Gecko */
+    box-sizing: border-box;
+    border-bottom: 1px solid #DBDBDB;
+}
+
+.btn-main {
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #EE8232;
+    color: white;
+    border: none;
+    font-size: 12pt;
+    cursor: pointer;
+}
+
+.btn-sec {
+    border-radius: 5px;
+    padding: 10px;
+    color: #EE8232;
+    border: 1px solid #EE8232;
+    font-size: 12pt;
+    cursor: pointer;
+    background-color: white;
+}
+
+.btn-trd {
+    color: #777777;
+    border: 1px solid #DBDBDB;
+    font-size: 12pt;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.signup-selector {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#signup-maker {
+    border: 1px solid #EE8232;
+    color: #EE8232;
+    background-color: white;
+}
+
+#signup-normal {
+    background-color: #EE8232;
+    color: white;
+}
+
+.signup-icon {
+    width: 70px;
+    height: 70px;
+}
+
+.signup-form {
+    background-color: #F9F9F9;
+    border-radius: 5px;
+}
+
+.signup-input {
+    width: 320px;
+}
+
+.signup-div {
+    width: 100%;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 2fr 5fr 2fr;
+    column-gap: 10px;
+}
+.top-banner {
+    width: 100%;
+    color: white;
+    background-color: #EE8232;
+    text-align: center;
+    padding: 5px 0px 5px 0px;
+    margin-bottom: 10px;
+}
+
+.rule-div {
+    width: 90%;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid #777777;
+    padding: 10px;
+}
+
+
+/* desktop */
+@media(min-width: 768px) {
+    .top {
+        margin-left: 15vw;
+        width: 70vw;
+    }
+    .nav-main {
+        padding-left: 15vw;
+        padding-right: 15vw;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    #recent {
+        position: absolute;
+        width: 100px;
+        height: 300px;
+        border: 1px solid #EBEBEB;
+        right: 10px;
+        z-index: 3;
+    }
+    #login-div {
+        width: 300px;
+    }
+    #signup-div {
+        width: 400px;
+    }
+    .signup-form {
+        padding: 40px 60px 40px 60px;
+        width: 600px;
+    }
+
+    .signup-btn {
+        width: 720px;
+    }
+}
+
+/* mobile */
+@media(max-width: 767px) {
+    .top {
+        width: 100vw;
+    }
+
+    .signup-form {
+        padding: 20px;
+        width: 90vw;
+    }
+    .signup-btn {
+        width: 90vw;
+    }
+}

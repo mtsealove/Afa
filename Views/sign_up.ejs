@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('config') %>
+        <title>회원가입</title>
+        <script>
+            $(function() {
+                $('#signup-maker').click(function() {
+                    location.href=`/SignUp/Maker`;
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <%- include('top') %>
+        <section class="center">
+            <br><br><br>
+            <p class="title">회원가입</p>
+
+            <div id="signup-div" class="horizontal between">
+                <div class="signup-selector" id="signup-maker">
+                    <img src="/public/images/sign_up_maker.png" class="signup-icon">
+                    <br>
+                    <label>생산자 회원가입</label>
+                </div>
+                <div class="signup-selector" id="signup-normal">
+                    <img src="/public/images/sign_up_normal.png" class="signup-icon">
+                    <br>
+                    <label>개인 회원가입</label>
+                </div>
+            </div>
+            <br><br><br><br><br>
+        </section>
+        <%- include('footer') %>
+    </body>
+</html> 

@@ -1,0 +1,84 @@
+<script>
+  $(function () {
+    const path = location.pathname;
+    $(`.top-nav[data-url='${path}']`).hide();
+    getLocation();
+  });
+
+
+  function getLocation() {
+    const cookies=document.cookie.split('=');
+    var addr=null;
+    for(var i=0; i<cookies.length; i++){
+      if(cookies[i]=='addr') {
+        addr=cookies[i+1];
+      }
+    }
+    
+    if(addr) {
+      $('#addr-span').text(addr);
+    } else if (navigator.geolocation) { // GPS를 지원하면
+      navigator.geolocation.getCurrentPosition(function (position) {
+        $.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=AIzaSyB7HIqbNBCocf9Ani5kHyjr_GB98uDmkNw`,
+        function(data){
+          const line=(data.results[0].formatted_address).split(' ');
+          var addr=line[1]+' '+line[2]+' '+line[3];
+          //alert(addr);
+          $('#addr-span').text(addr);
+          document.cookie=`addr=${addr}`;
+        });
+      }, function (error) {
+        console.error(error);
+      }, {
+        enableHighAccuracy: false,
+        maximumAge: 0,
+        timeout: Infinity
+      });
+    } else {
+      alert('GPS를 지원하지 않습니다');
+    }
+  }
+</script>
+<div class="top-banner">
+  <label>이제는 로컬 푸드로 밥상을 준비해보세요.</label>
+</div>
+<div class="horizontal between top">
+  <div id="location" class=" horizontal">
+    <img src="/public/images/loc.png" height="16" width="16">
+    <label class="size-10"><span style="color: #999999;">현재 위치</span> <span id="addr-span">위치를 찾는 중입니다.</span></label>
+  </div>
+  <div class="horizontal">
+    <a href="/Login" class="top-nav" data-url="/Login">로그인</a>
+    <label class="top-nav" data-url="/Login">|</label>
+    <a href="/SignUp" class="top-nav" data-url="/SignUp">회원가입</a>
+    <label class="top-nav" data-url="/SignUp">|</label>
+    <label class="top-nav">고객센터</label>
+  </div>
+</div>
+<div class="center">
+  <img src="/public/images/logo.png" width="130" height="130">
+  <p class="logo-txt">M A R K E T</p>
+</div>
+
+<nav class="horizontal between nav-main">
+  <div class=" horizontal">
+    <img src="/public/images/menu.png" width="24" height="24">
+    <select class="nav-item trasparent size-12" style="margin-left: 10px;">
+      <option>생산지역 모두보기</option>
+      <option>천안</option>
+      <option>생산지역 모두보기</option>
+    </select>
+  </div>
+  <a><span class="nav-item">전체 상품</span></a>
+  <a><span class="nav-item">이벤트</span></a>
+  <a><span class="nav-item">마켓</span></a>
+  <div class="search-box horizontal">
+    <img src="/public/images/search.png" width="20" height="20">
+    <input class="trasparent size-10" type="text" id="search-input" style="margin-left: 10px;"
+      placeholder="생산지역, 상품 검색">
+  </div>
+  <div class="horizontal">
+    <img src="/public/images/user.png" width="30" height="30">
+    <img src="/public/images/cart.png" width="30" height="30" style="margin-left: 10px;">
+  </div>
+</nav>
