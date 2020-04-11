@@ -1,18 +1,97 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>싸투리 마켓</title>
-        <%- include('config') %>
-    </head>
-    <body>
-        <%- include('recent') %>
-        <%- include('top') %>
-        <section>
-            <div id="top-banner">
-                
+
+<head>
+    <title>싸투리 마켓</title>
+    <%- include('config') %>
+    <script>
+        $(function () {
+            setBest();
+        });
+
+        function setItemClick() {
+            $('.item').click(function () {
+                const id = $(this).data('id');
+                location.href = `/Item/${id}`;
+            });
+        }
+
+        function setBest() {
+            $('.btn-round').click(function () {
+                const cat = $(this).data('cat');
+                $('.btn-round').removeClass('btn-round-active');
+                $(this).addClass('btn-round-active');
+                $.get(`/ajax/Get/Best?cat=${cat}`, function (data) {
+                    var html = ``;
+                    for (var i = 0; i < data.length; i++) {
+                        html += `<div class="item" data-id="${data[i].ID}">
+                        <div class=" my-item-img-container">
+                            <img src="/public/uploads/${data[i].File1}" class="my-item-img">
+                        </div>
+                        <label class=" gray size-12">${data[i].Name}</label>
+                        <label class="size-14" style="margin-top: 10px;">${data[i].Price.toLocaleString()}원</label>
+                    </div>`
+                    }
+                    $('#best-div').html(html);
+                    setItemClick();
+                });
+            });
+            $('.btn-round[data-cat=-1]').trigger('click');
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('recent') %>
+    <%- include('top') %>
+    <section>
+        <div id="top-banner">
+
+        </div>
+        <div class="center">
+            <br>
+            <h3 class="h gray">신상품 ></h3>
+            <div class="grid-4">
+                <% for(var i=0; i<news.length; i++) { %>
+                <div class="item" data-id="<%=news[i].ID%>">
+                    <div class=" my-item-img-container">
+                        <img src="/public/uploads/<%=news[i].File1%>" class="my-item-img">
+                    </div>
+                    <label class=" gray size-12"><%=news[i].Name%></label>
+                    <label class="size-14" style="margin-top: 10px;"><%=news[i].Price.toLocaleString()%>원</label>
+                </div>
+                <% } %>
             </div>
-        </section>
-        <%- include('footer') %>
-        
-    </body>
+            <br>
+            <h3 class=" h gray">싸투리마켓 <b>BEST</b> ></h3>
+
+            <div class=" horizontal">
+                <button class="btn-round btn-round-active" data-cat="-1">전체보기</button>
+                <button class="btn-round" data-cat="1">육류</button>
+                <button class="btn-round" data-cat="2">채소</button>
+                <button class="btn-round" data-cat="3">기타</button>
+            </div>
+            <br>
+            <div class="grid-4" id="best-div">
+
+            </div>
+
+            <h3 class=" h gray">MD’s Pick</h3>
+            <div class="grid-4">
+                <% for(var i=0; i<news.length; i++) { %>
+                <div class="item" data-id="<%=news[i].ID%>">
+                    <div class=" my-item-img-container">
+                        <img src="/public/uploads/<%=news[i].File1%>" class="my-item-img">
+                    </div>
+                    <label class=" gray size-12"><%=news[i].Name%></label>
+                    <label class="size-14" style="margin-top: 10px;"><%=news[i].Price.toLocaleString()%>원</label>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+    <%- include('footer') %>
+
+</body>
+
 </html>

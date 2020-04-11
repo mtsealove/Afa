@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>내 상품 관리 및 수정</title>
+    <%- include('config') %>
+    <script>
+        $(function() {
+            setRemoveBtn();
+            setEdit();
+        });
+        
+        function setRemoveBtn() {
+            $('#remove-btn').click(function() {
+                const ids=[];
+                const checked=$(`input[name='remove']:checked`);
+                for(var i=0; i<checked.length; i++) {
+                    console.log($(checked[i]).data('id'));
+                    ids.push($(checked[i]).data('id'));
+                }
+
+                if(ids.length==0) {
+                    alert('선택한 상품이 존재하지 않습니다.');
+                    return;
+                } else {
+                    if(confirm('선택한 상품(들)을 삭제하시겠습니까?')) {
+                        removeItems(ids);
+                    }
+                }
+            });
+        }
+
+        function removeItems(ids) {
+            $.post('/ajax/Maker/Remove/Item', {
+                ids:ids
+            }, function(data) {
+                if(data.Result) {
+                    alert('상품이 삭제되었습니다.');
+                    location.reload();
+                } else {
+                    alert('오류가 발생하였습니다.');
+                }
+            })
+        }
+
+        function setEdit() {
+            // 수정
+            $('.edit-btn').click(function() {
+                const id=$(this).data('id');
+                $(this).hide();
+                $(`label.price-cnt[data-id=${id}]`).hide();
+                $(`input.price-cnt[data-id=${id}]`).show();
+                $(`.edit-done-btn[data-id=${id}]`).show();
+            });
+            // 수정 완료
+            $('.edit-done-btn').click(function() {
+                const id=$(this).data('id');
+                const price=$(`input.price-cnt[data-id=${id}][data-cat='price']`).val();
+                const qty=$(`input.price-cnt[data-id=${id}][data-cat='cnt']`).val();
+                if(confirm('가격 및 재고를 수정하시겠습니까?')) {
+                    $.post('/ajax/Maker/Update/Item', {
+                        id: id,
+                        price: price,
+                        qty: qty
+                    }, function(data){
+                        if(data.Result) {
+                            alert('가격 및 재고가 수정되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    })
+                }
+            }); 
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('top') %>
+    <section class="center">
+        <br><br>
+        <p class="title">내 상품 관리 및 수정</p>
+        <table class="main">
+            <thead class="thead">
+                <th class="th">선택</th>
+                <th class="th">상품 이미지</th>
+                <th class="th">상품정보</th>
+                <th class="th">가격/재고</th>
+            </thead>
+            <tbody>
+                <% for(var i=0; i<items.length; i++) { %>
+                <tr>
+                    <td class="check" style="width: 10%;">
+                        <div class="check">
+                            <input name="remove" data-id="<%=items[i].ID%>" type="checkbox">
+                        </div>
+                        
+                    </td>
+                    <td style="width: 20%;">
+                        <div class=" small-img-container">
+                            <img class=" small-img" src="/public/uploads/<%=items[i].File1%>">
+                        </div>
+                    </td>
+                    <td style="width: 40%;">
+                        <div class="info-div">
+                            <label class="gray">등록날짜</label>
+                            <% var date=new Date(items[i].MDate);
+                                        var dateStr=date.getFullYear()+'-'; 
+                                        if(date.getMonth()<9){
+                                            dateStr+='0';
+                                        }
+                                        dateStr+=(date.getMonth()+1)+'-';
+                                        if(date.getDate()<10) {
+                                            dateStr+='0';
+                                        }
+                                        dateStr+=date.getDate(); %>
+                            <label class="gray"><%=dateStr%></label>
+                            <label class="gray">등록번호</label>
+                            <label class="gray"><%=items[i].ID%></label>
+                            <label class="gray">상품명</label>
+                            <label class="gray"><%=items[i].Name%></label>
+                        </div>
+                    </td>
+                    <td style="width: 30%;">
+                        <div class="price-cnt">
+                            <label class=" ">가격</label>
+                            <div class="hidden-br"></div>
+                            <label class="price-cnt " data-id="<%=items[i].ID%>"><%=items[i].Price.toLocaleString()%>원</label>
+                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="price" hidden value="<%=items[i].Price%>">
+                            <div class="hidden-br"></div>
+                            <label class="">재고</label>
+                            <div class="hidden-br"></div>
+                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="cnt" hidden value="<%=items[i].Qty%>">
+                            <label class="price-cnt " data-id="<%=items[i].ID%>"><%=items[i].Qty.toLocaleString()%>개</label>
+                            <div class="hidden-br"></div>
+                            <div style="grid-column: 1/2 span; display: flex; flex-direction: row; justify-content:center;align-items: center;">
+                                <button class=" btn-trd size-10 edit-btn" style="width: 100px;" data-id="<%=items[i].ID%>">수정</button>
+                                <button class=" btn-trd size-10 edit-done-btn" style="width: 100px;" data-id="<%=items[i].ID%>" hidden>수정 완료</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <br><br>
+        <div class="horizontal bottom-div" >
+            <button type="button" class=" btn-trd" id="remove-btn">선택 삭제</button>
+            <div style="width: 20px;"></div>
+            <button type="button" class=" btn-sec">상품 재등록</button>
+        </div>
+        <br><br>
+    </section>
+    <%- include('footer') %>
+</body>
+
+</html>

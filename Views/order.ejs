@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>주문/결제</title>
+    <script>
+        $(function () {
+            setPayHeight();
+            setRewardMax();
+            $(window).resize(function () {
+                setPayHeight();
+            });
+            setTotalPrice();
+            setPayBtn();
+        });
+
+        function setPayHeight() {
+            const height = $('.pay-info').outerHeight();
+            if ($(window).width > 768) {
+                $('.pay-total').height(height);
+            }
+        }
+
+        function setRewardMax() {
+            $('#reward').keyup(function () {
+                const max = $(this).data('max');
+                const value = $(this).val();
+                if (max < value) {
+                    $(this).val(max);
+                    value = max;
+                }
+                var total = $('#total-price').data('price');
+                total -= value;
+                $('#total-price').text(total.toLocaleString() + '원');
+            });
+        }
+
+        function setTotalPrice() {
+            const prices = $('.price');
+            var total = 0;
+            var delivery = 0;
+            for (var i = 0; i < prices.length; i++) {
+                const price = $(prices[i]).data('price');
+                total += price;
+                delivery++;
+            }
+            $('#total-price').data('price', total + delivery * 2500);
+            $('#total-price').text((total + delivery * 2500).toLocaleString() + '원');
+            $("#item-price").text(total.toLocaleString() + '원');
+        }
+
+        function setPayBtn() {
+            $('#pay-btn').click(function() {
+                if($('#rule').is(':checked')) {
+                const reward=$('#reward').val();
+                var para={
+                    reward:reward,
+                    item:[]
+                }
+                const item=$('.item-tr');
+                console.log(item);
+                for(var i=0; i<item.length; i++) {
+                    var id=$(item[i]).data('id');
+                    var price=$(item[i]).data('price');
+                    var qty=$(item[i]).data('qty');
+                    para.item.push({
+                        id:id,
+                        price: price,
+                        qty: qty
+                    });
+                }
+                if(confirm('구매를 진행하시겠습니까?')) {
+                    $.post('/ajax/Create/Order', para
+                    , function(data){
+                        if(data.Result) {
+                            alert('주문이 완료되었습니다.');
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            } else {
+                alert('약관에 동의해주세요.');
+            }
+            })
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('top') %>
+    <section class="center">
+        <p class="title">주문 / 결제</p>
+        <div class="pay-div">
+            <!-- 상품 정보 -->
+            <p class="pay-title">결제상품</p>
+            <hr class="pay">
+            <table style="width: 100%;">
+                <thead class="less">
+                    <th class="less">상품</th>
+                    <th class="less">수량</th>
+                    <th class="less">가격</th>
+                    <th class="less">배송비</th>
+                </thead>
+                <tbody>
+                    <% for(var i=0; i<items.length; i++) { %>
+                    <tr class="item-tr" data-id="<%=items[i].item.ID%>" data-price="<%=items[i].item.Price*items[i].qty%>" data-qty="<%=items[i].qty%>">
+                        <td>
+                            <div class=" horizontal">
+                                <div class=" small-img-container">
+                                    <img class=" small-img" src="/public/uploads/<%=items[i].item.File1%>">
+                                </div>
+                                <label class="gray"><%=items[i].item.Name%>&nbsp;&nbsp;</label>
+                                <label class="gray"><%=items[i].item.Unit%></label>
+                            </div>
+                        </td>
+                        <td class="middle"><%=items[i].qty%>개</td>
+                        <td class="middle price" data-price="<%=(items[i].item.Price*items[i].qty)%>">
+                            <%=(items[i].item.Price*items[i].qty).toLocaleString()%> 원</td>
+                        <td class="middle">2,500 원</td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <!-- 구매자 정보 -->
+            <p class="pay-title">구매자정보</p>
+            <hr class="pay">
+            <table style="width: 100%;">
+                <tr class="order">
+                    <td class="order-label">이름</td>
+                    <td class="order-txt"><%=my.Name%></td>
+                </tr>
+                <tr class="order">
+                    <td class="order-label">이메일</td>
+                    <td class="order-txt"><%=my.Email%></td>
+                </tr>
+                <tr class="order">
+                    <td class="order-label">휴대폰</td>
+                    <td class="order-txt">
+                        <input type="tel" class="normal" value="<%=my.Phone%>" style="width: 200px;">
+                        <button type="button" class="btn-main" style="margin-left: 10px; width: 100px;">수정</button>
+                        <br>
+                        <p class=" size-10 light-gray" style="margin-top: 10px; margin-bottom: 0px;">주문정보는 구매한 분의 번호로
+                            전송됩니다.</p>
+                    </td>
+                </tr>
+            </table>
+
+            <p class="pay-title">배송정보</p>
+            <hr class="pay">
+            <table style="width: 100%;">
+                <tr class="order">
+                    <td class="order-label">이름</td>
+                    <td class="order-txt">
+                        <input value="<%=my.Name%>" class="normal" style="width: 200px;">
+                    </td>
+                </tr>
+                <tr class="order">
+                    <td class="order-label">주소</td>
+                    <td class="order-txt">
+                        <button type="button" class="btn-main">주소 검색</button>
+                        <input type="text" class="input-line" readonly value="<%=my.MyAddr%>">
+                    </td>
+                </tr>
+                <tr class="order">
+                    <td class="order-label">휴대폰</td>
+                    <td class="order-txt">
+                        <input type="tel" class="normal" value="<%=my.Phone%>" style="width: 200px;">
+                    </td>
+                </tr>
+            </table>
+
+            <p class="pay-title">결제정보</p>
+            <hr class="pay">
+            <div class="order-pay">
+                <div class="pay-info">
+                    <p>총 상품 가격</p>
+                    <p id="item-price"></p>
+                    <p>+ 배송비</p>
+                    <p><%=(items.length*2500).toLocaleString()%>원</p>
+                    <p>- 적립금</p>
+                    <div class="horizontal">
+                        <input class="normal" style="width: 100px; margin-right: 20px;" id="reward"
+                            data-max="<%=my.Reward%>" type="number" value="0">
+                        <p>보유 적립금 <%=my.Reward.toLocaleString()%>원</p>
+                    </div>
+                </div>
+                <div class="pay-total">
+                    <br>
+                    <label>총 결제 가격</label><br>
+                    <label><b class=" oragne" id="total-price" data-price="">000원</b></label><br><br>
+                    <label>지금 결제시 적립금 1% 적립예정 </label><br>
+                </div>
+            </div>
+
+            <p class="pay-title">결제방법</p>
+            <hr class="pay">
+            <div class="horizontal" style="padding: 20px; width: 100%;">
+                <label class="gray size-14" style="width: 20%;">결제방법</label>
+                <div style="width: 80%;">
+                    <div class="pay-method-tab">
+                        <input type="radio" checked readonly style="margin-right: 10px;"><label class=" oragne">계좌이체</label>
+                    </div>
+                    <div class=" pay-method">
+                        <% for(var i=0; i<items.length; i++) { %>
+                            <% if(i==0||(i!=0&&items[i].item.BankAddr!=items[i-1].item.BankAddr)) {%>
+                                <label><%=items[i].item.Bank%></label>
+                                <label><%=items[i].item.BankAddr%></label>
+                                <p>예금주: <%=items[i].item.AcName%></p>
+                            <% } %>
+                        <% } %> 
+                    </div>
+                </div>
+            </div>
+            <div style="width: 100%; height: 1px; background-color: #DBDBDB;"></div>
+            <br>
+            <div class=" horizontal">
+                <input type="checkbox" id="rule"><label for="rule">구매조건 확인 및 결제대행 서비스 약관 동의</label>
+            </div>
+            <br><br>
+            <div style="width: 80%; margin-left: 10%;">
+                <button type="button" class=" btn-main btn-block" id="pay-btn">결제하기</button>
+            </div>
+            <br><br>
+        </div>
+    </section>
+    <%- include('footer') %>
+</body>
+
+</html>

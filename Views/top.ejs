@@ -1,32 +1,54 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
   $(function () {
     const path = location.pathname;
     $(`.top-nav[data-url='${path}']`).hide();
     getLocation();
+    $('#logout').click(function () {
+      if (confirm('로그아웃 하시겠습니까?')) {
+        location.href = '/Logout';
+      }
+    });
+    setMyPage();
+    setNav();
+    $(window).resize(function() {
+      setNav();
+    });
+    setLogo();
   });
+
+  function setNav() {
+    const width=$(window).width();
+    if(width>767) {
+      $('#small').hide();
+      $('#big').show();
+    } else {
+      $('#big').hide();
+      $('#small').show();
+    }
+  }
+
+  function setLogo() {
+    $('#logo').click(function() {
+      location.href='/';
+    });
+  }
 
 
   function getLocation() {
-    const cookies=document.cookie.split('=');
-    var addr=null;
-    for(var i=0; i<cookies.length; i++){
-      if(cookies[i]=='addr') {
-        addr=cookies[i+1];
-      }
-    }
+    var addr = $.cookie('addr');
     
-    if(addr) {
+    if (addr) {
       $('#addr-span').text(addr);
     } else if (navigator.geolocation) { // GPS를 지원하면
       navigator.geolocation.getCurrentPosition(function (position) {
         $.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=AIzaSyB7HIqbNBCocf9Ani5kHyjr_GB98uDmkNw`,
-        function(data){
-          const line=(data.results[0].formatted_address).split(' ');
-          var addr=line[1]+' '+line[2]+' '+line[3];
-          //alert(addr);
-          $('#addr-span').text(addr);
-          document.cookie=`addr=${addr}`;
-        });
+          function (data) {
+            const line = (data.results[0].formatted_address).split(' ');
+            var addr = line[1] + ' ' + line[2] + ' ' + line[3];
+            $('#addr-span').text(addr);
+            document.cookie = `addr=${addr}`;
+          });
       }, function (error) {
         console.error(error);
       }, {
@@ -35,7 +57,46 @@
         timeout: Infinity
       });
     } else {
-      alert('GPS를 지원하지 않습니다');
+      $('#addr-span').text('브라우저가 GPS를 지원하지 않습니다.');
+    }
+  }
+
+  function setMyPage() {
+    const cat = '<%=user.userCat%>';
+    var url = '';
+    switch (cat) {
+      case '1':
+        url = '/Maker/Items';
+        break;
+        case '2':
+          url='/MyPage';
+      default:
+
+    }
+    if (url != '') {
+      $('#my-page-btn').click(function () {
+        location.href = url;
+      });
+    } else {
+      $('#my-page-btn').click(function () {
+        alert('마이페이지를 이용하시려면 로그인하여야 합니다.');
+        location.href = '/Login';
+      });
+      
+    }
+    if(cat==2) {
+      $('#cart-btn').click(function() {
+        location.href='/Cart';
+      });
+    } else if(cat==1) {
+      $('#cart-btn').click(function(){
+        alert('일반 사용자 아이디로 로그인해주세요.');
+      });
+    } else {
+      $('#cart-btn').click(function() {
+        alert('장바구니를 이용하시려면 로그인하여야 합니다.');
+        location.href = '/Login';
+      });
     }
   }
 </script>
@@ -48,16 +109,22 @@
     <label class="size-10"><span style="color: #999999;">현재 위치</span> <span id="addr-span">위치를 찾는 중입니다.</span></label>
   </div>
   <div class="horizontal">
+    <% if(user.userID) { %>
+    <label class="top-nav"><a id="logout">로그아웃</a></label>
+    <% } else { %>
     <a href="/Login" class="top-nav" data-url="/Login">로그인</a>
+    <%} %>
+    <% if(!user.userID) { %>
     <label class="top-nav" data-url="/Login">|</label>
     <a href="/SignUp" class="top-nav" data-url="/SignUp">회원가입</a>
+    <% } %>
     <label class="top-nav" data-url="/SignUp">|</label>
     <label class="top-nav">고객센터</label>
   </div>
 </div>
-<div class="center">
+<div class="center point" id="logo">
   <img src="/public/images/logo.png" width="130" height="130">
-  <p class="logo-txt">M A R K E T</p>
+  <p class="logo-txt"><b>M A R K E T</b></p>
 </div>
 
 <nav class="horizontal between nav-main">
@@ -69,16 +136,26 @@
       <option>생산지역 모두보기</option>
     </select>
   </div>
-  <a><span class="nav-item">전체 상품</span></a>
-  <a><span class="nav-item">이벤트</span></a>
-  <a><span class="nav-item">마켓</span></a>
-  <div class="search-box horizontal">
-    <img src="/public/images/search.png" width="20" height="20">
-    <input class="trasparent size-10" type="text" id="search-input" style="margin-left: 10px;"
-      placeholder="생산지역, 상품 검색">
+  
+  <div class="horizontal between" id="big">
+    <a><span class="nav-item">전체 상품</span></a>
+    <a><span class="nav-item">이벤트</span></a>
+    <a><span class="nav-item">로컬마켓이란</span></a>
   </div>
-  <div class="horizontal">
-    <img src="/public/images/user.png" width="30" height="30">
-    <img src="/public/images/cart.png" width="30" height="30" style="margin-left: 10px;">
+  <div class=" horizontal between">
+    <div class="search-box horizontal">
+      <img src="/public/images/search.png" width="20" height="20">
+      <input class="trasparent size-10" type="text" id="search-input" style="margin-left: 10px;"
+        placeholder="생산지역, 상품 검색">
+    </div>
+    <div class="horizontal">
+      <img src="/public/images/user.png" width="30" height="30" id="my-page-btn" class="point">
+      <img src="/public/images/cart.png" width="30" height="30" style="margin-left: 10px;" id="cart-btn" class="point">
+    </div>
+  </div>
+  <div class="horizontal" id="small" style="grid-column: 1/ span 2; justify-content: space-around; margin-left: -40px;">
+    <a><span class="nav-item">전체 상품</span></a>
+    <a><span class="nav-item">이벤트</span></a>
+    <a><span class="nav-item">로컬마켓이란</span></a>
   </div>
 </nav>

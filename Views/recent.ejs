@@ -3,15 +3,60 @@
         setRecentLocation();
         $(window).resize(function(){
             setRecentLocation();
-        })
+        });
+        getRecentItem();
+        setPageMove();
     });
 
     function setRecentLocation() {
+
         const recentHeight=$('#recent').height();
-        const y=($(window).height()-recentHeight)/2;
-        $('#recent').offset({top:y});
+        const y=($(window).height()-recentHeight)/2+80;
+        $('#recent').css('top', y);
+    }
+
+    function getRecentItem() {
+        const recent=JSON.parse($.cookie('recent').split('j:')[1]);
+        var html='';
+        for(var i=1; i<=3; i++) {
+            if(recent[recent.length-i]) {
+                var id=recent[recent.length-i].id;
+                var img=recent[recent.length-i].img;
+                html+=`<img src="/public/uploads/${img}" class="recent-item" data-id='${id}'>`;
+            }
+        }
+         $('#recent-item').html(html);
+         setRecentMove();
+    }
+
+    function setRecentMove() {
+        $('.recent-item').click(function(){
+            const id=$(this).data('id');
+            location.href=`/Item/${id}`;
+        });
+    }
+    
+    function setPageMove() {
+        $('#page-top').click(function() {
+            $('html, body').animate({scrollTop: 0}, 400);
+        });
+        const height=$(window).height();
+        $('#page-bottom').click(function() {
+            $('html, body').animate({scrollTop: height}, 400);
+        });
     }
 </script>
 <div id="recent">
-
+    <% if(user.userCat==2) { %>
+        <button id="recent-cart" class=" size-10 point" onclick="location.href='/Cart'">장바구니</button>
+    <% } %>
+    
+    <button class="recent-btn size-10">
+        최근 본 상품
+    </button>
+    <div id="recent-item">
+        <img src="/public/uploads/7e98999a882023e3fd3ff945ab1bb9d5" class="recent-item">
+    </div>
+    <button class="recent-btn size-10 point" id="page-top">페이지 상단</button>
+    <button class="recent-btn size-10 point" id="page-bottom">페이지 하단</button>
 </div>

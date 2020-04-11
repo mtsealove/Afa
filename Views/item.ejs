@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>상품-<%=item.Name%></title>
+    <%- include('config') %>
+    <script>
+        $(function () {
+            setPrice(<%=item.Price %>);
+            setTabs();
+            setItemLinks();
+            setQna('<%=user.userID%>');
+            setReView('<%=user.userID%>');
+            setBoard();
+            setCart(<%=user.userCat%>);
+            setPay(<%=user.userCat%>);
+        });
+        function setPrice(price) {
+            $('#qty').change(function () {
+                const qty = $(this).val();
+                const total = price * qty;
+                $('#price').text(total.toLocaleString() + ' 원');
+            });
+        }
+
+        function setTabs() {
+            $('.tab').click(function () {
+                $('.tab').removeClass('tab-active');
+                $(this).addClass('tab-active');
+                const id = $(this).data('cat');
+                $('.cat').fadeOut(300);
+                setTimeout(() => {
+                    $(`#${id}`).fadeIn(300);
+                }, 400);
+            });
+        }
+
+        function setItemLinks() {
+            $('.item').click(function () {
+                const id = $(this).data('id');
+                location.href = `/Item/${id}`;
+            });
+        }
+
+        function setQna(userID) {
+            $('#qna-form').hide();
+            $('#qna-btn').click(function () {
+                if (userID) {
+                    $('#qna-form').fadeIn(200);
+                } else {
+                    alert('로그인 후 이용해주세요.');
+                }
+            });
+            $('#qna-confirm-btn').click(function () {
+                const title = $('#qna-title').val();
+                const content = $('#qna-content').val();
+                const item = $('#item-id').val();
+                if (title == '') {
+                    alert('문의 제목을 입력해주세요.');
+                    return;
+                } else if (content == '') {
+                    alert('문의 내용을 입력해주세요.');
+                    return;
+                } else {
+                    if (confirm('문의사항을 등록하시겠습니까?')) {
+                        $.post('/ajax/Qna', {
+                            title: title,
+                            content: content,
+                            item: item
+                        }, function (data) {
+                            if (data.Result) {
+                                alert('문의사항이 등록되었습니다.');
+                                location.reload();
+                            } else {
+                                alert('오류가 발생하였습니다.');
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function setReView(userID) {
+            $('#review-form').hide();
+            $('#review-btn').click(function () {
+                if (userID) {
+                    $('#review-form').fadeIn(200);
+                } else {
+                    alert('로그인 후 이용해주세요.');
+                }
+            });
+            $('#review-confirm-btn').click(function () {
+                const title = $('#review-title').val();
+                const content = $('#review-content').val();
+                const item = $('#item-id').val();
+                if (title == '') {
+                    alert('후기 제목을 입력해주세요.');
+                    return;
+                } else if (content == '') {
+                    alert('후기 내용을 입력해주세요.');
+                    return;
+                } else {
+                    if (confirm('고객후기를 등록하시겠습니까?')) {
+                        $.post('/ajax/Review', {
+                            title: title,
+                            content: content,
+                            item: item
+                        }, function (data) {
+                            if (data.Result) {
+                                alert('고객후기가 등록되었습니다.');
+                                location.reload();
+                            } else {
+                                alert('오류가 발생하였습니다.');
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function setBoard() {
+            $('.board').click(function () {
+                const cat = $(this).data('cat');
+                const id = $(this).data('id');
+                const content = $(`.content[data-cat='${cat}'][data-id='${id}']`);
+                if (content.css('display') == 'none') {
+                    content.fadeIn(200);
+                    var url = '';
+                    if (cat == 'review') {
+                        url = '/ajax/Update/Review'
+                    } else {
+                        url = '/ajax/Update/Question'
+                    }
+                    $.post(url, {
+                        id: id
+                    }, function (data) {
+
+                    });
+                } else {
+                    content.fadeOut(200);
+                }
+
+            })
+        }
+
+        function setCart(cat) {
+            $('#add-cart-btn').click(function () {
+                if (!cat) {
+                    alert('장바구니 이용은 로그인 후 가능합니다.');
+                    return;
+                } else if (cat == 1) {
+                    alert('로그아웃 후 일반 아이디로 이용해 주세요.');
+                    return;
+                } else {
+                    const qty = $('#qty').val();
+                    if (typeof (qty) == "undefined") {
+                        alert('임시품절인 상품입니다.');
+                    } else {
+                        $.post('/ajax/InsertCart', {
+                            item: $('#item-id').val(),
+                            qty: $('#qty').val()
+                        }, function (data) {
+                            switch (data.rs) {
+                                case 1:
+                                    alert('상품이 장바구니에 담겼습니다.');
+                                    break;
+                                case 0:
+                                    alert('오류가 발생하였습니다.');
+                                    break;
+                                case 2:
+                                    alert('이미 장바구니에 담겨져있는 상품입니다.');
+                                    break;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function setPay(cat) {
+            $('#pay-btn').click(function() {
+                if(!cat) {
+                    alert('로그인 후 이용 가능합니다.');
+                    location.href='/Login';
+                } else if (cat==1){
+                    alert('로그아웃 후 일반 아이디로 이용해 주세요.');
+                } else {
+                    if($('#qty').val()) {
+                        location.href=`/Order?item=<%=item.ID%>&qty=${$('#qty').val()}`;
+                    } else {
+                        alert('본 상품은 현재 구매가 불가능합니다.');
+                    }
+                    
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('top') %>
+
+    <section class="center">
+        <br><br>
+        <div class="item-top">
+            <input value="<%=item.ID%>" hidden id="item-id">
+            <img src="/public/uploads/<%=item.File1%>" class="item-top-img">
+            <div>
+                <label class=" size-10 light-gray"><%=item.Addr.split(' ')[1]%> > <%=item.MakerName%> 생산자 >
+                    <%=item.Name%></label><br>
+                <h1 class="gray h">[<%=item.MakerName%> 생산자] <%=item.Name%></h3>
+                    <hr>
+                    <p class="size-15"><b><%=item.Price.toLocaleString()%>원</b></p>
+                    <p class="size-10 light-gray" style="margin-top: -10px;">시세에 따라 가격이 변동될 수 있습니다.</p>
+                    <hr>
+                    <div class="item-des">
+                        <label class="size-11 gray">판매단위</label><label class="size-11 light-gray"><%=item.Unit%></label>
+                        <label class="size-11 gray">배송구분</label><label
+                            class="size-11 light-gray"><%=item.Delivery%></label>
+                        <label class="size-11 gray">원산지</label><label
+                            class="size-11 light-gray"><%=item.Addr.split(' ')[1]+' '+item.Addr.split(' ')[2]%></label>
+                        <label class="size-11 gray">포장타입</label><label class="size-11 light-gray"><%=item.Pack%></label>
+                    </div>
+                    <hr>
+                    <div class="item-des">
+                        <label class="size-11 gray">구매수량</label>
+                        <% if(item.Qty>0 ) { %>
+                        <select style="width: 50px;" class="normal" id="qty">
+                            <% for(var i=1; i<=10; i++) { %>
+                            <% if(i>item.Qty) { break; } %>
+                            <option value="<%=i%>"><%=i%></option>
+                            <% } %>
+                        </select>
+                        <% } else { %>
+                        <label class="size-11 light-gray">일시품절</label>
+                        <% } %>
+                    </div>
+                    <hr style="border: 0.5px solid #EE8232;">
+                    <div class=" horizontal between" style="margin:20px 0px 20px 0px;">
+                        <label class="size-12 gray">총 상품금액</label>
+                        <label class=" oragne size-14"><b id="price"><%=item.Price.toLocaleString()%> 원</b></label>
+                    </div>
+                    <div class="horizontal between">
+                        <button type="button" class="btn-sec" style="width: 40%;" id="add-cart-btn">장바구니 담기</button>
+                        <button type="button" class="btn-main" style="width: 58%;" id="pay-btn">구매하기</button>
+                    </div>
+                    <br><br>
+            </div>
+        </div>
+        <div class="divide">
+            <label class=" gray size-12 point">브랜드샵 ></label>
+            <br>
+            <div class="grid-4">
+                <% for(var i=0; i<other.length; i++) { %>
+                <div class="item" data-id="<%=other[i].ID%>">
+                    <div class=" my-item-img-container">
+                        <img src="/public/uploads/<%=other[i].File1%>" class="my-item-img">
+                    </div>
+                    <label class=" gray size-12"><%=other[i].Name%></label>
+                    <label class="size-14" style="margin-top: 10px;"><%=other[i].Price.toLocaleString()%>원</label>
+                </div>
+                <% } %>
+            </div>
+        </div>
+        <br><br><br>
+        <div class="detail">
+            <div class="horizontal">
+                <button type="button" class="tab tab-active point" data-cat="detail">상품설명</button>
+                <button type="button" class="tab point" data-cat="review">고객후기 (<%=review.length%>)</button>
+                <button type="button" class="tab point" data-cat="qna">상품문의 (<%=question.length%>)</button>
+            </div>
+            <hr style="border: 1px solid #EE8232; margin-top: 0px;">
+            <div id="detail" class="cat">
+                <img src="/public/uploads/<%=item.File2%>" class=" detail-img">
+            </div>
+            <div id="review" class="cat" hidden>
+                <br>
+                <h3 class="gray h">PRODUCT REVIEW</h3>
+                <label class="size-11 light-gray">• 상품에 대한 문의를 남기는 공간입니다. 해당 게시판의 성격과 다른 글은 사전동의 없이 담당 게시판으로 이동될 수
+                    있습니다.</label>
+                <div class="faq-div">
+                    <p class="light-gray size-11">• 배송관련, 주문(취소/교환/환불)관련 문의 및 요청사항은 고객센터에 1:1문의를 남겨주세요.</p>
+                    <div class=" horizontal">
+                        <select class="size-12 btn-trd" style="height: 40px; margin-right: 20px;">
+                            <option>최근 등록순</option>
+                        </select>
+                        <button type="button" class="btn-main size-12" style="height: 40px;" id="review-btn">리뷰
+                            작성</button>
+                    </div>
+                </div><br>
+                <table style="width: 100%;">
+                    <thead class="thead">
+                        <th class="th">#</th>
+                        <th class="th">제목</th>
+                        <th class="th">작성자</th>
+                        <th class="th">작성일</th>
+                        <th class="th">조회</th>
+                    </thead>
+                    <tbody style="text-align: center;">
+                        <% for(var i=0; i<review.length; i++){ %>
+                        <tr class="board" data-cat="review" data-id="<%=review[i].ID%>">
+                            <td style="width: 10%;"><%=review[i].ID%></td>
+                            <td style="width: 40%;"><%=review[i].Title%></td>
+                            <td style="width: 15%;"><%=review[i].Name%></td>
+                            <td style="width: 20%;"><%=review[i].Date%></td>
+                            <td style="width: 15%;"><%=review[i].Click%></td>
+                        </tr>
+                        <tr class="content" data-cat="review" data-id="<%=review[i].ID%>" hidden>
+                            <td colspan="5">
+                                <div class=" normal" style="text-align: left;">
+                                    <% var line=review[i].Content.split('\n'); %>
+                                    <% for(var j=0; j<line.length; j++) { %>
+                                    <p><%=line[j]%></p>
+                                    <% } %>
+                                </div>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+                <div class="item-form" id="review-form">
+                    <input class="input-item normal " type="text" placeholder="리뷰 제목" id="review-title">
+                    <textarea class="normal input-item" type="text" placeholder="리뷰 내용" rows="10"
+                        id="review-content"></textarea>
+                    <div class="horizontal between" style="width: 100%;margin-top: 5px;">
+                        <label></label>
+                        <button type="button" class="btn-main" id="review-confirm-btn">리뷰 등록</button>
+                    </div>
+                </div>
+            </div>
+            <div id="qna" class="cat" hidden>
+                <br>
+                <h3 class="gray h">PRODUCT Q&A</h3>
+                <label class="size-11 light-gray">• 상품에 대한 문의를 남기는 공간입니다. 해당 게시판의 성격과 다른 글은 사전동의 없이 담당 게시판으로 이동될 수
+                    있습니다.</label>
+                <div class="faq-div">
+                    <p class="light-gray size-11">• 배송관련, 주문(취소/교환/환불)관련 문의 및 요청사항은 고객센터에 1:1문의를 남겨주세요.</p>
+                    <div class=" horizontal">
+                        <select class="size-12 btn-trd" style="height: 40px; margin-right: 20px;">
+                            <option>최근 등록순</option>
+                        </select>
+                        <button type="button" class="btn-main size-12" style="height: 40px;" id="qna-btn">상품문의</button>
+                    </div>
+                </div><br>
+                <table style="width: 100%;">
+                    <thead class="thead">
+                        <th class="th">#</th>
+                        <th class="th">제목</th>
+                        <th class="th">작성자</th>
+                        <th class="th">작성일</th>
+                        <th class="th">조회</th>
+                    </thead>
+                    <tbody style="text-align: center;">
+                        <% for(var i=0; i<question.length; i++){ %>
+                        <tr class="board" data-cat="question" data-id="<%=question[i].ID%>">
+                            <td style="width: 10%;"><%=question[i].ID%></td>
+                            <td style="width: 40%;"><%=question[i].Title%></td>
+                            <td style="width: 15%;"><%=question[i].Name%></td>
+                            <td style="width: 20%;"><%=question[i].Date%></td>
+                            <td style="width: 15%;"><%=question[i].Click%></td>
+                        </tr>
+                        <tr class="content" data-cat="question" data-id="<%=question[i].ID%>" hidden>
+                            <td colspan="5">
+                                <div class=" normal" style="text-align: left;">
+                                    <% var line=question[i].Content.split('\n'); %>
+                                    <% for(var j=0; j<line.length; j++) { %>
+                                    <p><%=line[j]%></p>
+                                    <% } %>
+                                </div>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+                <div class="item-form" id="qna-form">
+                    <input class="input-item normal " type="text" placeholder="문의 제목" id="qna-title">
+                    <textarea class="normal input-item" type="text" placeholder="문의 내용" rows="10"
+                        id="qna-content"></textarea>
+                    <div class="horizontal between" style="width: 100%;margin-top: 5px;">
+                        <label></label>
+                        <button type="button" class="btn-main" id="qna-confirm-btn">문의 등록</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <%- include('footer') %>
+    <%- include('recent') %>
+</body>
+
+</html>

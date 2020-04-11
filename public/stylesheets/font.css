@@ -36,6 +36,10 @@ body {
     font-size: 15pt;
 }
 
+.h {
+    font-weight: normal;
+}
+
 .nav-item{
     color: #555555;
     cursor: pointer;
@@ -63,7 +67,21 @@ text-decoration: none;
 
 .signup-label {
     color: #555555;
-    font-size: 14pt;
+    font-size: 13pt;
+    word-wrap: break-word;
+    word-break: keep-all;
+}
+
+th.th {
+    color: #555555;
+    font-size: 12pt;
+    font-weight: normal;
+}
+
+th.less {
+    color: #555555;
+    font-size: 12pt;
+    font-weight: normal;
 }
 
 pre {
@@ -72,4 +90,37 @@ pre {
     white-space: -o-pre-wrap; /* Opera */
     white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
     word-wrap: break-word; /* IE 5.5+ */
+}
+
+.error {
+    color: red;
+    position: relative;
+    top: 5px;
+    font-size: 11pt;
+}
+
+.gray {
+    color: #555555;
+}
+
+.light-gray {
+    color: #777777;
+}
+
+label.price-cnt {
+    color: #EE8232;
+}
+.oragne {
+    color: #EE8232;
+}
+
+.point {
+    cursor: pointer;
+}
+
+.pay-title {
+    margin-top: 30px;
+    color: #777777;
+    font-size: 16pt;
+    font-weight: normal;
 }

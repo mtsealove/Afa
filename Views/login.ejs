@@ -7,12 +7,59 @@
     <script>
         $(function() {
             setBtns();
+            $('#input-id').focus();
         });
 
         function setBtns() {
             $('#sign-up-btn').click(function() {
                 location.href='/SignUp';
             });
+            $('#login-btn').click(function() {
+                if(checkInput()) {
+                    $.post('/ajax/Login', {
+                        id:$('#input-id').val(),
+                        pw:$('#input-pw').val(),
+                        cat: 2
+                    }, function(data){
+                        if(data.Result) {
+                            location.href='/';
+                        } else {
+                            alert('아이디 또는 비밀번호가 일치하지 않습니다.');
+                        }
+                    });
+                }
+            });
+            $('#maker-login-btn').click(function() {
+                if(checkInput()) {
+                    $.post('/ajax/Login', {
+                        id:$('#input-id').val(),
+                        pw:$('#input-pw').val(),
+                        cat: 1
+                    }, function(data){
+                        if(data.Result) {
+                            location.href='/';
+                        } else {
+                            alert('아이디 또는 비밀번호가 일치하지 않습니다.');
+                        }
+                    });
+                }
+            });
+        }
+
+        // 입력 값 확인
+        function checkInput() {
+            const id=$('#input-id').val();
+            const pw=$('#input-pw').val();
+
+            if(id=='') {
+                alert('아이디를 입력하세요.');
+                return false;
+            } else if(pw=='') {
+                alert('비밀번호를 입력하세요.');
+                return false;
+            } else {
+                return true;
+            }
         }
     </script>
 </head>
@@ -23,8 +70,8 @@
         <br><br><br>
         <p class="title">로그인</p>
         <div id="login-div">
-            <input class="normal size-11" placeholder="이메일을 입력해주세요." type="email">
-            <input class="normal size-11" placeholder="비밀번호를 입력해주세요." style="margin-top: 10px;" type="password">
+            <input class="normal size-11" placeholder="아이디를 입력해주세요." type="text" id="input-id">
+            <input class="normal size-11" placeholder="비밀번호를 입력해주세요." style="margin-top: 10px;" type="password" id="input-pw">
             <br>
             <div class="horizontal between" style="width: 100%;margin-top: 5px;">
                 <label></label>
@@ -35,9 +82,9 @@
                 </div>
             </div>
             <br>
-            <button type="button" class=" btn-main btn-block">로그인</button>
+            <button type="button" class=" btn-main btn-block" id="login-btn">로그인</button>
             <button type="button" class=" btn-sec btn-block" style="margin-top: 5px;" id="sign-up-btn">회원가입</button>
-            <button type="button" class=" btn-trd btn-block" style="margin-top: 5px;">생산자 로그인</button>
+            <button type="button" class=" btn-trd btn-block" style="margin-top: 5px;" id="maker-login-btn">생산자 로그인</button>
         </div>
         <br><br><br><br><br><br><br>
     </section>

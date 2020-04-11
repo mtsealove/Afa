@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>상품 등록</title>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        $(function () {
+            setSearchAddr();
+            setImageBtn();
+            $('#register-btn').click(function() {
+                checkInput(); 
+            });
+        });
+        function setSearchAddr() {
+            $('#search-my-addr-btn').click(function () {
+                new daum.Postcode({
+                    oncomplete: function (data) {
+                        $('#make-addr').val(data.roadAddress);
+                    }
+                }).open();
+            });
+        }
+        function setImageBtn() {
+            const files = $('input[name="file"]');
+            const imgs=$('.preview-contents');
+
+            $('#file0').change(function (){
+                readURL(this, $('#img0'));
+            });
+            $('#file1').change(function (){
+                readURL(this, $('#img1'));
+            })
+            $('#file2').change(function (){
+                readURL(this, $('#img2'));
+            })
+            
+            $('#image-btn').click(function () {
+                var index = -1;
+                for (var i = 0; i < files.length; i++) {
+                    if ($(files[i]).val() == '') {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index == -1) {
+                    alert('이미지 파일은 3개를 초과할 수 없습니다.');
+                } else {
+                    $(files[index]).trigger('click');
+                }
+            });
+        }
+
+         //화면에 이미지 표시
+         function readURL(input, img) {
+            img.show();
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    img.attr('src', e.target.result);
+                    img.fadeIn();
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                img.hide();
+            }
+        }
+
+        function checkInput() {
+            const file0=$('#file0').val();
+            const file1=$('#file1').val();
+            const name=$('#name').val();
+            const des=$('#des').val();
+            const make_addr=$('#make-addr').val();
+            const date=$('#date').val();
+            const price=$('#price').val();
+            const unit=$('#unit').val();
+            const delivery=$(`input[name='delivery']:checked`).length;
+            const pack=$('#pack').val();
+
+            if(file0=='') {
+                alert('대표 이미지 파일을 선택하세요.');
+                return;
+            } else if(file1=='') {
+                alert('설명 이미지 파일을 선택하세요.');
+                return;
+            } else if(name=='') {
+                alert('상품 이름을 입력하세요.');
+                return;
+            } else if(des=='') {
+                alert('상품 소개를 입력하세요');
+                return;
+            } else if(make_addr=='') {
+                alert('생산지를 입력하세요.');
+                return;
+            } else if(date=='') {
+                alert('생산 날짜를 입력하세요.');
+                return;
+            } else  if(unit=='') {
+                alert('판매 단위를 입력하세요.');
+                return;
+            } else if(delivery==0) {
+                alert('배송 구분을 1개 이상 선택하세요');
+                return;
+            } else  if(pack=='') {
+                alert('포장 타입을 입력하세요.');
+                return;
+            } else if(price=='') {
+                alert('가격을 입력하세요.');
+                return;
+            } else {
+                if(confirm('상품을 등록하시겠습니까?')) {
+                    $('#form').submit();
+                }
+            }   
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('top') %>
+    <section class="center">
+        <br><br>
+        <p class="title">상품 등록</p>
+        <div class=" signup-form">
+            <form enctype="multipart/form-data" method="POST" id="form" action="/Maker/Item/Register">
+                <div class=" signup-div">
+                    <label class="signup-label">상품 이미지</label>
+                    <button type="button" class="btn-main" style="width: 120px;" id="image-btn">이미지 찾기</button>
+                </div>
+                <div class=" signup-div">
+                    <label></label>
+                    <div class=" horizontal">
+                        <div class="preview-img">
+                            <input type="file" name="file" accept="image/*" hidden id="file0">
+                            <img class="preview-contents" hidden id="img0">
+                        </div>
+                        <div class="preview-img">
+                            <input type="file" name="file" accept="image/*" hidden id="file1">
+                            <img class="preview-contents" hidden id="img1">
+                        </div>
+                        <div class="preview-img">
+                            <input type="file" name="file" accept="image/*" hidden id="file2">
+                            <img class="preview-contents" hidden id="img2">
+                        </div>
+                    </div>
+                </div>
+                <div class=" signup-div">
+                    <label class="signup-label">상품 이름</label>
+                    <input class="size-11 normal" type="text" placeholder="상품 이름을 입력해주세요." id="name" name="name">
+                </div>
+                <div class=" signup-div">
+                    <label class="signup-label">상품 종류</label>
+                    <select name="cat" class=" size-12 signup-input normal">
+                        <% for(var i=0; i<cat.length; i++) { %>
+                            <option value="<%=cat[i].ID%>"><%=cat[i].Name%></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div class=" signup-div">
+                    <label class="signup-label">상품 소개</label>
+                    <input class="size-11 normal" type="text" placeholder="간단한 상품 소개를 입력해주세요." name="des" id="des">
+                </div>
+
+                <div class=" horizontal between signup-div">
+                    <label class="signup-label">생산지</label>
+                    <button class="btn-main" style="width: 180px;" id="search-my-addr-btn" type="button">주소 검색</button>
+                    <label></label>
+                </div>
+                <div class=" horizontal between signup-div">
+                    <label></label>
+                    <input readonly class=" input-line" id="make-addr" placeholder="주소를 검색해주세요." name="make_addr">
+                    <label></label>
+                </div>
+                <div class=" signup-div">
+                    <label class="signup-label">생산 날짜</label>
+                    <input class="size-11 normal" type="date" name="date" id="date">
+                </div>
+                <div class=" signup-div">
+                    <label class="signup-label">판매단위</label>
+                    <input class="size-11 normal" type="text" name="unit" id="unit" placeholder="ex) 1Kg">
+                </div>
+                <div class=" signup-div">
+                    <label class="signup-label">배송 구분</label>
+                    <div class="horizontal">
+                        <input name="delivery" type="checkbox" value="택배배송" id="delivery-post"><label for="delivery-post" class="size-11 gray">택배배송</label>
+                        <input name="delivery" type="checkbox" value="방문수령" id="delivery-take"><label for="delivery-take" class="size-11 gray">방문수령</label>
+                    </div>
+                </div>
+                <div class=" signup-div">
+                    <label class="signup-label">포장타임</label>
+                    <input class="size-11 normal" type="text" name="pack" id="pack" placeholder="ex) 냉장/종이포장">
+                </div>
+                <div class=" signup-div">
+                    <label class="signup-label">가격</label>
+                    <input class="size-11 normal" type="number" id="price" name="price">
+                    <label>원</label>
+                </div>
+            </form>
+        </div>
+        <br>
+        <button class=" btn-main signup-btn" type="button" id='register-btn'>상품 등록</button>
+        <br>
+    </section>
+    <%- include('footer') %>
+</body>
+
+</html>

@@ -216,14 +216,18 @@
                 return;
             }
             $.post(`/ajax/SendMail`, {mail:mail}, function(data){
-                if(data.code!='-1') {
-                    code=data.code;
-                    $('#verify-div').fadeIn(200);
-                    alert('인증번호가 발송되었습니다.');
-                } else {
-                    alert('오류가 발생하였습니다.');
+                switch (data.code) {
+                    case '-1':
+                        alert('오류가 발생하였습니다.');
+                        break;
+                    case '0':
+                        alert('이미 사용중인 이메일입니다.');
+                        break;
+                    default:
+                        code = data.code;
+                        $('#verify-div').fadeIn(200);
+                        alert('인증번호가 발송되었습니다.');
                 }
-                
             });
         }
 
@@ -233,8 +237,8 @@
                 alert('인증이 완료되었습니다');
                 $('#input-verify').attr('readonly', true);
                 $('#input-email').attr('readonly', true);
-                $('#get-verify-btn').attr('readonly', true);
-                $('#verify-btn').attr('readonly', true);
+                $('#get-verify-btn').attr('disabled', true);
+                $('#verify-btn').attr('disabled', true);
                 verify=true;
             } else {
                 alert('인증번호가 일치하지 않습니다.');
@@ -256,7 +260,7 @@
                     <label class="signup-label">아이디</label>
                     <div>
                         <input class="normal " placeholder="6자 이상의 영문과 숫자를 조합해주세요." id="input-id" name="id" type="text">
-                        <label style="color: red;" id="check-id">이미 사용중인 아이디입니다.</label>
+                        <label class="error" id="check-id">이미 사용중인 아이디입니다.</label>
                     </div>
                     
                     <label></label>
@@ -265,7 +269,7 @@
                     <label class="signup-label">비밀번호</label>
                     <div>
                         <input class="normal " placeholder="비밀번호를 입력해주세요." id="input-pw" name="pw" type="password">
-                        <label style="color: red;" id="check-pw-valid">비밀번호는 8자 이상이여야 합니다.</label>
+                        <label class="error" id="check-pw-valid">비밀번호는 8자 이상이여야 합니다.</label>
                     </div>
                     
                     <label></label>
@@ -274,7 +278,7 @@
                     <label class="signup-label">비밀번호 확인</label>
                     <div>
                         <input class="normal "placeholder="확인 비밀번호를 입력해주세요." id="input-pw-confirm" type="password">
-                        <label style="color: red;" id="check-pw">비밀번호가 일치하지 않습니다.</label>
+                        <label class="error" id="check-pw">비밀번호가 일치하지 않습니다.</label>
                     </div>
                     
                     <label></label>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>상품 관리</title>
+    <%- include('config') %>
+    <script>
+        $(function () {
+            $('#register-btn').click(function () {
+                location.href = '/Maker/Item/Register';
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <%- include('top') %>
+    <section class="center">
+        <br><br>
+        <p class="title">판매중인 내 상품</p>
+        <div class="grid-4">
+            <% for(var i=0; i<items.length; i++) { %>
+            <div class="item">
+                <div class="my-item-img-container">
+                    <img src="/public/uploads/<%=items[i].File1%>" class="my-item-img">
+                </div>
+                
+                <label><%=items[i].Name%></label>
+            </div>
+            <% } %>
+        </div>
+        <br>
+        <!-- 상품 상위 4개 -->
+        <div class="horizontal between" style="width: 60vw;">
+            <button class="btn-sec btn-block" id="edit-btn" onclick="location.href='/Maker/Item/Manage'">관리 및
+                수정</button>
+            <div style="width: 20px;"></div>
+            <button class="btn-main btn-block" id="register-btn">등록하기</button>
+        </div>
+        <br>
+    </section>
+    <%- include('footer') %>
+</body>
+
+</html>
