@@ -2,7 +2,7 @@ const mysql=require('mysql');
 const fs=require('fs');
 const connection=mysql.createConnection({
     database: 'Afa',
-    host: 'localhost',
+    host: 'afa.cstju1a91zxa.us-east-2.rds.amazonaws.com',
     user: 'AfaManager',
     password: fs.readFileSync('pw.dat')
 });
