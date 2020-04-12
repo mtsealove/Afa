@@ -21,6 +21,13 @@
     align-items: center;
     width: 100vw;
 }
+
+div.process {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 body {
     margin: 0;
     padding: 0;
@@ -73,17 +80,6 @@ footer {
 }
 td.middle {
     text-align: center;
-}
-
-.footer-top {
-    background-color: #EBEBEB;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding-top: 20px;
-    padding-bottom: 20px;
 }
 
 .footer-bottom {
@@ -245,7 +241,7 @@ td.order-txt {
     align-items: center;
 }
 .top-banner {
-    width: 100%;
+    width: 100vw;
     color: white;
     background-color: #EE8232;
     text-align: center;
@@ -349,6 +345,12 @@ hr.pay {
     border: 1.5px solid #EE8232;
 }
 
+hr.divider {
+    width: 100%;
+    margin: 0px;
+    border: .5px solid #D3D3D3;
+}
+
 .item-des {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -438,8 +440,64 @@ div.pay-method {
     padding: 10px 30px 10px 30px;
     width: 80%;
 }
+
+div.my-small {
+    background-color: #F9F9F9;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+div.last-order {
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    grid-column-gap: 20px;
+    grid-row-gap: 5px;
+}
 /* desktop */
 @media(min-width: 768px) {
+    div.my-container {
+        width: 1000px;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: baseline;
+    }
+    div.my-tab-container {
+        margin-right: -1px; 
+        z-index: 2;
+    }
+    div.my-tab {
+        width: 200px;
+        margin-bottom: -1px;
+        background-color: #F9F9F9;
+        border-top: 1px solid #DBDBDB;
+        border-left: 1px solid #DBDBDB;
+        border-bottom: 1px solid #DBDBDB;
+        padding: 10px;
+    }
+    .my-tab.my-tab-active {
+        background-color: white;
+        border-right: 1px solid white;
+    }
+    div.my-tab-info {
+        background-color: white;
+        width: 660px;
+        border-top-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border: 1px solid #DBDBDB;
+        padding: 50px 60px 50px 60px;
+    }
+    .footer-top {
+        background-color: #EBEBEB;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
     div.order-pay {
         width: 100%;
         display: flex;
@@ -473,6 +531,9 @@ div.pay-method {
     .top {
         margin-left: 15vw;
         width: 70vw;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
     }
     .nav-main {
         padding-left: 15vw;
@@ -640,6 +701,18 @@ div.pay-method {
 
 /* mobile */
 @media(max-width: 767px) {
+    .footer-top {
+        background-color: #EBEBEB;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    #location {
+        margin-bottom: 10px;
+        width: 100%;
+    }
     div.pay-total {
         width: 100%;
     }
@@ -717,6 +790,9 @@ div.pay-method {
     .top {
         width: 90vw;
         margin-left: 5vw;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
     }
 
     .signup-form {
@@ -732,7 +808,7 @@ div.pay-method {
         height: 150px;
     }
     #signup-div {
-        width: 65%;
+        width: 85%;
     }
     .grid-4 {
         display: grid;
@@ -747,10 +823,12 @@ div.pay-method {
     }
 
     .nav-main {
+        width: 86vw;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         grid-gap: 20px;
-        padding: 10px 20px 10px 20px;
+        padding: 10px 7vw 10px 7vw;
+        overflow: hidden;
     }
 
     .item-list {

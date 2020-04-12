@@ -183,6 +183,24 @@ exports.getNewitems=(callback)=>{
     });
 }
 
+exports.getAllItems=(order, asc, word, callback)=>{
+    var query=`select * from Item `;
+    if(word) {
+        query+=` where Name like '%${word}%' `;
+    }
+    if(order) {
+        query+=` order by ${order} ${asc}`;
+    }
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
 exports.getItem=(id, callback)=>{
     const query=`select I.*, M.Name MakerName from Item I join Members M
     on I.Owner=M.ID where I.ID=${id}`;
@@ -384,8 +402,8 @@ exports.getMy=(user, callback)=>{
     })
 }
 
-exports.createPay=(user, ItemID, Qty, Price, callback)=>{
-    const query=`insert into Pay set MemberID='${user}', ItemID=${ItemID}, Qty=${Qty}, Price=${Price}, PayTime=now()`;
+exports.createOrder=(user, ItemID, Qty, Price, callback)=>{
+    const query=`insert into Orders set MemberID='${user}', ItemID=${ItemID}, Qty=${Qty}, Price=${Price}, PayTime=now()`;
     connection.query(query, (e0)=>{
         if(e0 ){
             console.error(e0);
@@ -406,4 +424,44 @@ exports.downReward=(user, reward, callback)=>{
             callback(true);
         }
     });
+}
+exports.getMyOrderCnt=(user, callback)=>{
+    const query=`select S.ID, if(O.Cnt is not null, O.Cnt, 0) Cnt from OrderStatus S left outer join
+    (select Status, count(ID) Cnt from Orders 
+    where MemberID='${user}' group by Status) O 
+    on S.ID=O.Status`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getMyOrderItems=(user, callback)=>{
+    const query=`select O.*, I.* from
+    (select ID OrderID, ItemID, Qty OrderQty, Price OrderPrice, date_format(PayTime, '%Y-%m-%d') Date 
+    from Orders where MemberID='${user}') O join Item I on O.ItemID=I.ID order by OrderID desc`;
+    connection.query(query, (e0, rs)=>{
+        if(e0){
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getMyPage=(user, callback)=>{
+    const query=`select Name, Reward from Members where ID='${user}'`;
+connection.query(query, (e0, rs)=>{
+    if(e0) {
+        console.error(e0);
+        callback(null);
+    } else {
+        callback(rs[0]);
+    }
+});
 }

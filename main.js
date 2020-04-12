@@ -37,6 +37,14 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/All', (req, res)=>{
+    const user=getUser(req);
+    var word=req.query.word;
+    sql.getAllItems(null, null, word,(items)=>{
+        res.render('all', {user: user, items:items});
+    });
+})
+
 app.get('/Item/:ID', (req, res)=>{
     const ID=req.params.ID;
     const user=getUser(req);
@@ -122,7 +130,7 @@ app.post('/ajax/Create/Order', (req, res)=>{
         if(i!=item.length-1) {
             ids+=',';
         }
-        sql.createPay(user.userID, item[i].id, item[i].qty, item[i].price, (rs)=>{
+        sql.createOrder(user.userID, item[i].id, item[i].qty, item[i].price, (rs)=>{
             cnt++;
         });
     }
@@ -332,7 +340,13 @@ app.get('/Logout', (req, res)=>{
 app.get('/MyPage', (req, res)=>{
     const user=getUser(req);
     if(user.userID) {
-        res.render('mypage', {user:user});
+        sql.getMyOrderCnt(user.userID, (orderCnt)=>{
+            sql.getMyOrderItems(user.userID, (items)=>{
+                sql.getMyPage(user.userID, (my)=>{
+                    res.render('mypage', {user:user, orderCnt:orderCnt, items:items, my:my});
+                }); 
+            });
+        });
     } else {
         noPermission(res);
     }

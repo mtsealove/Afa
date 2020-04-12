@@ -10,11 +10,9 @@
       }
     });
     setMyPage();
-    setNav();
-    $(window).resize(function() {
-      setNav();
-    });
+    
     setLogo();
+    setSearch();
   });
 
   function setNav() {
@@ -99,11 +97,20 @@
       });
     }
   }
+
+  function setSearch() {
+    $('#search-input').keydown(function(key) {
+        if(key.keyCode==13) {
+          const word=$(this).val();
+          location.href=`All?word=${word}`;
+        }
+    });
+  }
 </script>
 <div class="top-banner">
   <label>이제는 로컬 푸드로 밥상을 준비해보세요.</label>
 </div>
-<div class="horizontal between top">
+<div class="top">
   <div id="location" class=" horizontal">
     <img src="/public/images/loc.png" height="16" width="16">
     <label class="size-10"><span style="color: #999999;">현재 위치</span> <span id="addr-span">위치를 찾는 중입니다.</span></label>
@@ -138,10 +145,11 @@
   </div>
   
   <div class="horizontal between" id="big">
-    <a><span class="nav-item">전체 상품</span></a>
-    <a><span class="nav-item">이벤트</span></a>
+    <a href="/All"><span class="nav-item" >전체 상품</span></a>
+    <a><span class="nav-item" >이벤트</span></a>
     <a><span class="nav-item">로컬마켓이란</span></a>
   </div>
+
   <div class=" horizontal between">
     <div class="search-box horizontal">
       <img src="/public/images/search.png" width="20" height="20">
@@ -153,9 +161,11 @@
       <img src="/public/images/cart.png" width="30" height="30" style="margin-left: 10px;" id="cart-btn" class="point">
     </div>
   </div>
+  <!-- 
   <div class="horizontal" id="small" style="grid-column: 1/ span 2; justify-content: space-around; margin-left: -40px;">
     <a><span class="nav-item">전체 상품</span></a>
     <a><span class="nav-item">이벤트</span></a>
     <a><span class="nav-item">로컬마켓이란</span></a>
   </div>
+-->
 </nav>

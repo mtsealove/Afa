@@ -7,10 +7,103 @@
     <body>
         <%- include('top') %>
         <section class="center" style="background-color: #F9F9F9;">
-            <br><br>
+            <hr class="divider">
+            <br>
             <p class="title">마이페이지</p>
             <br>
-            
+            <div class="my-container">
+                <!-- select -->
+                <div class="my-tab-container">
+                    <div class="my-tab point my-tab-active">
+                        <p>주문</p>
+                        <label class=" size-10 light-gray">배송조회/취소/반품/환불내역/쿠폰</label>
+                    </div>
+                    <div class="my-tab point" >
+                        <p>활동</p>
+                        <label class=" size-10 light-gray">문의하기/문의내역확인/구매후기</label>
+                    </div>
+                    <div class="my-tab point">
+                        <p>정보</p>
+                        <label class=" size-10 light-gray">개인정보 확인/수정</label>
+                    </div>
+                </div>
+                <!-- contents -->
+                <div class="my-tab-info">
+                    <div class=" horizontal">
+                        <img width="60" height="60" src="/public/images/default_profile.png">
+                        <p class=" size-15" style="margin-left: 10px;"><%=my.Name%> 님</p>
+                    </div>
+                    <br>
+                    <div class=" horizontal between" style="width: 100%; align-items: flex-start">
+                        <div class=" my-small horizontal" style="width: 180px; align-items: baseline;">
+                            <label class="gray">적립금</label>
+                            <div style="margin-left: 10px;">
+                                <label><%=my.Reward.toLocaleString()%>원</label><br>
+                                <label class=" size-10 light-gray">소멸예정 적립금 : 0원</label>
+                            </div>
+                        </div>
+                        <div class=" my-small horizontal between" style="width: 380px;">
+                            <div class="process">
+                                <label class="gray size-12">결제완료</label><br>
+                                <label class="oragne size-14"><b><%=orderCnt[0].Cnt%></b></label>
+                            </div>
+                            <img src="/public/images/process.png">
+                            <div class="process">
+                                <label class="gray size-12">배송준비</label><br>
+                                <label class="oragne size-14"><b><%=orderCnt[1].Cnt%></b></label>
+                            </div>
+                            <img src="/public/images/process.png">
+                            <div class="process">
+                                <label class="gray size-12">배송시작</label><br>
+                                <label class="oragne size-14"><b><%=orderCnt[2].Cnt%></b></label>
+                            </div>
+                            <img src="/public/images/process.png">
+                            <div class="process">
+                                <label class="gray size-12">배송완료</label><br>
+                                <label class="oragne size-14"><b><%=orderCnt[3].Cnt%></b></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <p class="title" style="text-align: center;">주문 내역</p>
+                    <table style="width: 100%;">
+                        <thead class=" thead">
+                            <th class="th">구매상품</th>
+                            <th class="th">구매정보</th>
+                            <th class="th">옵션</th>
+                        </thead>
+                        <tbody>
+                            <% for(var i=0; i<items.length; i++) { %>
+                                <tr class="item-tr" >
+                                  <td>
+                                    <div class=" small-img-container">
+                                        <img class=" small-img" src="/public/uploads/<%=items[i].File1%>">
+                                    </div>
+                                  </td>
+                                  <td style="width: 50%;">
+                                    <div class="last-order">
+                                        <label class="size-11 gray">구매날짜</label><label class="size-11 gray"><%=items[i].Date%></label>
+                                        <label class="size-11 gray">구매번호</label><label class="size-11 gray"><%=items[i].OrderID%></label>
+                                        <div style="height: 20px;"></div><div></div>
+                                        <label>상품명</label><label><%=items[i].Name%></label>
+                                        <label>수량</label><label><%=items[i].OrderQty.toLocaleString()%> 개</label>
+                                        <label>가격</label><label><%=items[i].OrderPrice.toLocaleString()%> 원</label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div>
+                                        <button type="button" class=" btn-main size-11 btn-block" style="margin-bottom: 10px;">리뷰쓰기</button>
+                                        <button type="button" class=" btn-sec size-11 btn-block"  style="margin-bottom: 10px;">배송 추적</button>
+                                        <button type="button" class=" btn-trd size-11 btn-block">반품 신청</button>
+                                    </div>
+                                  </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br><br>
         </section>
         <%- include('footer') %>
     </body>
