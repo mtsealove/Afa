@@ -86,7 +86,7 @@
                 <th class="th">선택</th>
                 <th class="th">상품 이미지</th>
                 <th class="th">상품정보</th>
-                <th class="th">가격/재고</th>
+                <th class="th my-item-manage">가격/재고</th>
             </thead>
             <tbody>
                 <% for(var i=0; i<items.length; i++) { %>
@@ -122,7 +122,7 @@
                             <label class="gray"><%=items[i].Name%></label>
                         </div>
                     </td>
-                    <td style="width: 30%;">
+                    <td class="my-item-manage">
                         <div class="price-cnt">
                             <label class=" ">가격</label>
                             <div class="hidden-br"></div>
@@ -141,14 +141,32 @@
                         </div>
                     </td>
                 </tr>
+                <tr class=" my-item-manage-m">
+                    <td colspan="3">
+                        <div class="horizontal" style=" background-color: #f9f9f9;">
+                        <div class="price-cnt">
+                            <label class=" ">가격</label>
+                            <label class="price-cnt " data-id="<%=items[i].ID%>"><%=items[i].Price.toLocaleString()%>원</label>
+                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="price" hidden value="<%=items[i].Price%>">
+                            <label class="">재고</label>
+                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="cnt" hidden value="<%=items[i].Qty%>">
+                            <label class="price-cnt " data-id="<%=items[i].ID%>"><%=items[i].Qty.toLocaleString()%>개</label>
+                        </div>
+                        <div style="grid-column: 1/2 span; display: flex; flex-direction: row; justify-content:center;align-items: center;">
+                            <button class=" btn-trd size-10 edit-btn" style="width: 100px;" data-id="<%=items[i].ID%>">수정</button>
+                            <button class=" btn-trd size-10 edit-done-btn" style="width: 100px;" data-id="<%=items[i].ID%>" hidden>수정 완료</button>
+                        </div>
+                    </div>
+                    </td>
+                </tr>
                 <% } %>
             </tbody>
         </table>
         <br><br>
         <div class="horizontal bottom-div" >
             <button type="button" class=" btn-trd" id="remove-btn">선택 삭제</button>
-            <div style="width: 20px;"></div>
-            <button type="button" class=" btn-sec">상품 재등록</button>
+            <button type="button" class=" btn-sec" style="margin-left: 20px;">상품 재등록</button>
+            <button type="button" class="btn-main" style="margin-left: 20px;" onclick="location.href='/Maker/Order'">주문확인</button>
         </div>
         <br><br>
     </section>

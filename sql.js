@@ -465,3 +465,33 @@ connection.query(query, (e0, rs)=>{
     }
 });
 }
+
+exports.getMakerOrders=(user, callback)=>{
+    const query=`select OO.*, date_format(OO.PayTime, '%Y-%m-%d') OrderDate, MM.Name MemberName, MM.MyAddr, MM.Phone from
+    (select I.Name, I.File1,  O.* from 
+    (select * from Orders where ItemID in
+    (select ID from Item where Owner='${user}')) O join 
+    Item I on O.ItemID=I.ID) OO join Members MM
+    on OO.MemberID=MM.ID`;
+
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.updateInvoice=(id, corp, invoice, callback)=>{
+    const query=`update Orders set Corp='${corp}', Invoice='${invoice}' where ID=${id}`;
+    connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}

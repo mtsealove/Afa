@@ -37,6 +37,11 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/LocalMarket', (req, res)=>{
+    const user=getUser(req);
+    res.render('localmarket', {user:user});
+});
+
 app.get('/All', (req, res)=>{
     const user=getUser(req);
     var word=req.query.word;
@@ -386,6 +391,17 @@ app.get('/Maker/Item/Register', (req, res)=>{
     }
 });
 
+app.get('/Maker/Order', (req,res)=>{
+    const user=getUser(req);
+    if(user.userCat==1) {
+        sql.getMakerOrders(user.userID, (order)=>{
+            res.render('maker_order', {user:user, orders:order});
+        });
+    } else {
+        noPermission(res);
+    }
+});
+
 app.post('/Maker/Item/Register', upload.array('file', 3), (req, res)=>{
     const name=req.body['name'];
     const des=req.body['des'];
@@ -446,6 +462,19 @@ app.post('/ajax/Maker/Update/Item', (req, res)=>{
             res.json(not);
         }
     });
+});
+
+app.post('/ajax/Maker/Update/Invoice', (req, res)=>{
+    const id=req.body['id'];
+    const corp=req.body['corp'];
+    const invoice=req.body['invoice'];
+    sql.updateInvoice(id, corp, invoice, (rs)=>{
+        if(rs) {
+            res.json(ok);
+        } else {
+            res.json(not);
+        }
+    }); 
 });
 
 app.post('/ajax/Qna', (req, res)=>{

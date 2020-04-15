@@ -70,7 +70,7 @@
                         <thead class=" thead">
                             <th class="th">구매상품</th>
                             <th class="th">구매정보</th>
-                            <th class="th">옵션</th>
+                            <th class="th my-btns">옵션</th>
                         </thead>
                         <tbody>
                             <% for(var i=0; i<items.length; i++) { %>
@@ -90,13 +90,22 @@
                                         <label>가격</label><label><%=items[i].OrderPrice.toLocaleString()%> 원</label>
                                     </div>
                                   </td>
-                                  <td>
+                                  <td class="my-btns">
                                     <div>
                                         <button type="button" class=" btn-main size-11 btn-block" style="margin-bottom: 10px;">리뷰쓰기</button>
                                         <button type="button" class=" btn-sec size-11 btn-block"  style="margin-bottom: 10px;">배송 추적</button>
                                         <button type="button" class=" btn-trd size-11 btn-block">반품 신청</button>
                                     </div>
                                   </td>
+                                </tr>
+                                <tr class="m-my-btns">
+                                    <td colspan="2">
+                                        <div>
+                                            <button type="button" class=" btn-main size-11 btn-block" style="margin-bottom: 10px;">리뷰쓰기</button>
+                                            <button type="button" class=" btn-sec size-11 btn-block"  style="margin-bottom: 10px;">배송 추적</button>
+                                            <button type="button" class=" btn-trd size-11 btn-block">반품 신청</button>
+                                        </div>
+                                    </td>
                                 </tr>
                             <% } %>
                         </tbody>
