@@ -44,6 +44,22 @@
                     });
                 }
             });
+
+            $('#manager-login').dblclick(function() {
+                if(checkInput()) {
+                    $.post('/ajax/Login', {
+                        id:$('#input-id').val(),
+                        pw:$('#input-pw').val(),
+                        cat:3
+                    }, function(data){
+                        if(data.Result) {
+                            location.href='/Manager';
+                        } else {
+                            alert('아이디 또는 비밀번호가 일치하지 않습니다.');
+                        }
+                    });
+                }
+            });
         }
 
         // 입력 값 확인
@@ -68,7 +84,7 @@
     <%- include('top')%>
     <section class="center">
         <br>
-        <p class="title">로그인</p>
+        <p class="title" id="manager-login">로그인</p>
         <div id="login-div">
             <input class="normal size-11" placeholder="아이디를 입력해주세요." type="text" id="input-id">
             <input class="normal size-11" placeholder="비밀번호를 입력해주세요." style="margin-top: 10px;" type="password" id="input-pw">

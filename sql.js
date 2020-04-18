@@ -495,3 +495,55 @@ exports.updateInvoice=(id, corp, invoice, callback)=>{
         }
     });
 }
+
+exports.updateStatus=(id, status, callback)=>{
+    const query=`update Orders set Status=${status} where ID=${id}`;
+    connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    })
+}
+
+exports.getMakerList=(callback)=>{
+    const query=`select MMMM.*, OOOO.TotalPrice from
+    (select MMM.*, OOO.MonthPrice from 
+    (select ID, Name, Gender, Phone, MakeAddr, date_format(SignUpdate, '%Y.%m.%d') SignUp, Bank, BankAddr 
+    from Members where Cat=1) MMM left outer join
+     (select Owner, sum(Price) MonthPrice from 
+    (select I. Owner, O.Price from Orders O join
+    (select ID, Owner from Item) I on O.ItemID=I.ID 
+    where date_format(O.PayTime, '%Y-%m')=date_format(now(), '%Y-%m')) OO group by Owner) OOO 
+    on MMM.ID=OOO.Owner) MMMM join 
+    (select Owner, sum(Price) TotalPrice from 
+    (select I. Owner, O.Price from Orders O join
+    (select ID, Owner from Item) I on O.ItemID=I.ID ) OO group by Owner) OOOO
+    on MMMM.ID=OOOO.Owner`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    })
+}   
+
+exports.getConsumerList=(callback)=>{
+    const query=`select M.*, O.Price from 
+    (select Name, ID, Gender, Phone, MyAddr, date_format(SignUpdate, '%Y.%m.%d') SignUp
+    from Members where Cat=2) M left outer join 
+    (select MemberID, sum(Price) Price from Orders group by MemberID) O
+    on M.ID=O.MemberID`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    })
+}

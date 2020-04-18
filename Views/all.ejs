@@ -9,10 +9,12 @@
 <body>
     <%- include('recent') %>
     <%- include('top') %>
+    <% if(word) { %>
+    <div class=" search-result">
+        <label><b><%=word%></b>(으)로 검색한 결과 <b><%=items.length%>건</b></label>
+    </div>
+    <% } %>
     <section>
-        <div id="top-banner">
-
-        </div>
         <div class="center">
             <br>
             <h3 class="h gray">전체 상품</h3>

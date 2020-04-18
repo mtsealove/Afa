@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('config') %>
+        <title>관리자</title>
+        <script>
+            $(function() {
+                setTabs();
+                setTrSearch();
+            });
+            function setTabs() {
+                $('.my-tab').click(function() {
+                    const div=$(this).data('div');
+                    $('.manager-div').fadeOut(300);
+                    $(`#${div}`).fadeIn(300);
+                    $('.my-tab').removeClass('my-tab-active');
+                    $(this).addClass('my-tab-active');
+                });
+
+                $($('.my-tab')[0]).trigger('click');
+            }
+
+            function setTrSearch() {
+                $('#maker-search-input').keyup(function() {
+                    const word=$(this).val();
+                    if(word!='') {
+                        $('.maker-tr').hide();
+                    $(`.maker-tr[data-name*='${word}']`).show();
+                    } else {
+                        $('.maker-tr').show();
+                    }
+                    
+                });
+                $('#consumer-search-input').keyup(function() {
+                    const word=$(this).val();
+                    if(word!='') {
+                        $('.consumer-tr').hide();
+                        $(`.consumer-tr[data-name*='${word}']`).show();
+                    } else {
+                        $('.consumer-tr').show();
+                    }
+                    
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <%- include('top') %>
+        <section class="center">
+            <p class="title">관리자 페이지</p>
+            <div class="my-container">
+                <div class="my-tab-container">
+                    <div class="my-tab point my-tab-active" data-div="div-statistics">
+                        <p>통계</p>
+                    </div>
+                    <div class="my-tab point" data-div="div-maker" >
+                        <p>생산자 관리</p>
+                    </div>
+                    <div class="my-tab point" data-div="div-consumer">
+                        <p>소비자 관리</p>
+                    </div>
+                    <div class="my-tab point">
+                        <p>매출/주문 관리</p>
+                    </div>
+                    <div class="my-tab point" data-div="div-design">
+                        <p>디자인 관리</p>
+                    </div>
+                    <div class="my-tab point">
+                        <p>문의 관리</p>
+                    </div>
+                </div>
+                <!-- contents -->
+                <div class="my-tab-info" style="min-height: 400px;">
+                    <!-- 통계 -->
+                    <div id="div-statistics" class="manager-div">
+                        <!-- 회원 -->
+                        <p class="size-15">전체 회원 수</p>
+                        <table style="width: 300px;">
+                            <thead class="thead">
+                                <th class="th">생산자</th>
+                                <th class="th">소비자</th>
+                            </thead>
+                            <tbody>
+                                <tr style="text-align: center; height: 40px;">
+                                    <td><%=(maker.length).toLocaleString()%>명</td>
+                                    <td><%=(consumer.length).toLocaleString()%>명</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+                        <!-- 날짜별 -->
+                        <div class=" horizontal">
+                            <p class="size-15" style="margin-right: 20px;">날짜 선택</p>
+                            <input type="date" class="trasparent size-12">
+                        </div>
+                        <table style="width: 100%;">
+                            <thead class="thead">
+                                <th class="th">총 주문수</th>
+                                <th class="th">결제<br>(입금완료)</th>
+                                <th class="th">취소/반품</th>
+                                <th class="th">매출액</th>
+                                <th class="th">방문자수</th>
+                                <th class="th">회원가입 수</th>
+                            </thead>
+                            <tbody>
+                                <tr style="text-align: center; height: 40px;">
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+                        <!-- 월별 -->
+                        <div class=" horizontal">
+                            <p class="size-15" style="margin-right: 20px;">월 선택</p>
+                            <input type="date" class="trasparent size-12">
+                        </div>
+                        <table style="width: 100%;">
+                            <thead class="thead">
+                                <th class="th">총 주문수</th>
+                                <th class="th">결제<br>(입금완료)</th>
+                                <th class="th">취소/반품</th>
+                                <th class="th">매출액</th>
+                                <th class="th">방문자수</th>
+                                <th class="th">회원가입 수</th>
+                            </thead>
+                            <tbody>
+                                <tr style="text-align: center; height: 40px;">
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                    <td style="width: 16.6%;">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 생산자 관리 -->
+                    <div id="div-maker" class="manager-div">
+                        <div class="horizontal between">
+                            <div class=" horizontal">
+                                <p class=" size-15" style="margin-right: 20px;">생산자 관리</p>
+                                <p>총 <%=(maker.length).toLocaleString()%>명</p>
+                            </div>
+                            <div class="search-box horizontal" style="background-color:#f9f9f9;">
+                                <img src="/public/images/search.png" width="20" height="20">
+                                <input class="trasparent size-10" type="text" id="maker-search-input" style="margin-left: 10px;"
+                                  placeholder="생산자명 검색">
+                              </div>
+                        </div>
+                        <table style="width: 100%;">
+                            <thead class="thead" >
+                                <th class="th size-10">이름</th>
+                                <th class="th size-10">아이디</th>
+                                <th class="th size-10">성별</th>
+                                <th class="th size-10">전화번호</th>
+                                <th class="th size-10">생산지역</th>
+                                <th class="th size-10">가입일</th>
+                                <th class="th size-10">월 판매액</th>
+                                <th class="th size-10">총 판매액</th>
+                                <th class="th size-10">계좌</th>
+                            </thead>
+                            <tbody>
+                                <% for(var i=0; i<maker.length; i++) { %>
+                                    <tr class=" size-10 maker-tr" style="text-align: center; height: 50px;" data-name="<%=maker[i].Name%>">
+                                        <td style="width: 10%;"><%=maker[i].Name%></td>
+                                        <td style="width:10%"><%=maker[i].ID%></td>
+                                        <td style="width:5%"><%=maker[i].Gender=='m'?'남성':'여성'%></td>
+                                        <td style="width:10%"><%=maker[i].Phone%></td>
+                                        <td style="width:15%"><%=maker[i].MakeAddr%></td>
+                                        <td style="width:10%"><%=maker[i].SignUp%></td>
+                                        <td style="width:10%"><%=maker[i].MonthPrice.toLocaleString()%></td>
+                                        <td style="width:10%"><%=maker[i].TotalPrice.toLocaleString()%></td>
+                                        <td style="width:15%"><%=maker[i].Bank%><br><%=maker[i].BankAddr%></td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 소비자 관리 -->
+                    <div class="manager-div" id="div-consumer">
+                        <div class="horizontal between">
+                            <div class=" horizontal">
+                                <p class=" size-15" style="margin-right: 20px;">소비자 관리</p>
+                                <p>총 <%=(consumer.length).toLocaleString()%>명</p>
+                            </div>
+                            <div class="search-box horizontal" style="background-color:#f9f9f9;">
+                                <img src="/public/images/search.png" width="20" height="20">
+                                <input class="trasparent size-10" type="text" id="consumer-search-input" style="margin-left: 10px;"
+                                  placeholder="소비자명 검색">
+                              </div>
+                        </div>
+                        <table style="width: 100%;">
+                            <thead class="thead">
+                                <th class="th">이름</th>
+                                <th class="th">아이디</th>
+                                <th class="th">성별</th>
+                                <th class="th">전화번호</th>
+                                <th class="th">주소</th>
+                                <th class="th">가입일</th>
+                                <th class="th">구매액</th>
+                            </thead>
+                            <tbody>
+                                <% for(var i=0; i<consumer.length; i++) { %>
+                                    <tr style="text-align: center; height: 50px;" class="consumer-tr" data-name="<%=consumer[i].Name%>">
+                                        <td style="width: 10%;"><%=consumer[i].Name%></td>
+                                        <td style="width: 10%;"><%=consumer[i].ID%></td>
+                                        <td style="width: 5%;"><%=consumer[i].Gender=='m'?'남성':'여성'%></td>
+                                        <td style="width: 10%;"><%=consumer[i].Phone%></td>
+                                        <td style="width: 15%;"><%=consumer[i].MyAddr%></td>
+                                        <td style="width: 10%;"><%=consumer[i].SignUp%></td>
+                                        <td style="width: 10%;"><%=consumer[i].Price.toLocaleString()%></td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 주문/매출관리 -->
+                    <div class="manager-div">
+
+                    </div>
+                    <!-- 디자인 관리 -->
+                    <div class="manager-div" id="div-design">
+                        <div class="horizontal between" style="width: 100%;"> 
+                            <img class="banner-manage" src="/public/images/">
+                            <input type="file" hidden>
+                            <button type="button" class="btn-main">변경</button>
+                        </div>
+                        <br>
+                        <div class="horizontal between" style="width: 100%;"> 
+                            <img class="banner-manage">
+                            <button type="button" class="btn-main">변경</button>
+                        </div>
+                        <br>
+                        <div class="horizontal between" style="width: 100%;"> 
+                            <img class="banner-manage">
+                            <button type="button" class="btn-main">변경</button>
+                        </div>
+                        <br>
+                        <div class="horizontal between" style="width: 100%;"> 
+                            <img class="banner-manage">
+                            <button type="button" class="btn-main">변경</button>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </section>
+        <%- include('footer') %>
+    </body>
+</html>

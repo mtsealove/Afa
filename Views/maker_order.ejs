@@ -1,126 +1,162 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <%- include('config') %>
-        <title>주문확인</title>
-        <script>
-            $(function(){
-                setInvoice();
-            });
 
-            function setInvoice() {
-                const selects=$('.save-invoice-select');
-                for(var i=0; i<selects.length; i++) {
-                    const select=$(selects[i]);
-                    const corp=select.data('corp');
-                    //alert(corp);
-                    select.val(corp);
+<head>
+    <%- include('config') %>
+    <title>주문확인</title>
+    <script>
+        $(function () {
+            setInvoice();
+            setStatus();
+        });
+
+        function setInvoice() {
+            const selects = $('.save-invoice-select');
+            for (var i = 0; i < selects.length; i++) {
+                const select = $(selects[i]);
+                const corp = select.data('corp');
+                //alert(corp);
+                select.val(corp);
+            }
+            $('.save-invoice-btn').click(function () {
+                const id = $(this).data('id');
+                const corp = $(`.save-invoice-select[data-id='${id}']`).val();
+                const invoice = $(`.save-invoice-input[data-id='${id}']`).val();
+                if (corp == 0) {
+                    alert('택배회사를 선택하세요.');
+                    return;
+                } else if (invoice == '') {
+                    alert('송장번호를 입력하세요.');
+                    return;
+                } else if (confirm('송장번호를 등록하시겠습니까?')) {
+                    $.post('/ajax/Maker/Update/Invoice', {
+                        id: id,
+                        corp: corp,
+                        invoice: invoice
+                    }, function (data) {
+                        if (data.Result) {
+                            alert('송장번호가 등록되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
                 }
-                $('.save-invoice-btn').click(function() {
-                    const id=$(this).data('id');
-                    const corp=$(`.save-invoice-select[data-id='${id}']`).val();
-                    const invoice=$(`.save-invoice-input[data-id='${id}']`).val();
-                    if(corp==0) {
-                        alert('택배회사를 선택하세요.');
-                        return;
-                    } else if(invoice==''){
-                        alert('송장번호를 입력하세요.');
-                        return;
-                    } else if(confirm('송장번호를 등록하시겠습니까?')) {
-                        $.post('/ajax/Maker/Update/Invoice', {
-                            id: id,
-                            corp:corp,
-                            invoice: invoice
-                        }, function(data){
-                            if(data.Result) {
-                                alert('송장번호가 등록되었습니다.');
+            });
+        }
+
+        function setStatus() {
+            const selects=$('.save-status-select');
+            for(var i=0; i<selects.length; i++) {
+                const select=$(selects[i]);
+                const status=select.data('status');
+                select.val(status);
+            }
+            $('.save-staus-btn').click(function () {
+                const id = $(this).data('id');
+                const status = $(`.save-status-select[data-id=${id}]`).val();
+                if (confirm('상태를 변경하시겠습니까?')) {
+                    $.post('/ajax/Maker/Update/Status', {
+                        id: id,
+                        status: status
+                    },
+                        function (data) {
+                            if (data.Result) {
+                                alert('주문 상태가 변경되었습니다.');
                                 location.reload();
                             } else {
                                 alert('오류가 발생하였습니다.');
                             }
                         });
-                    }
-                });
-            }
-        </script>
-    </head>
-    <body>
-        <%- include('top') %>
-        <% function phone(og) {
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('top') %>
+    <% function phone(og) {
             var num='';
             num=og.substring(0, 3)+'-'+og.substring(3, 7)+'-'+og.substring(7, 11);
             return num;
         } %>
-        <section class="center">
-            <br>
-            <p class="title">주문확인</p>
-            <table class="main">
-                <thead>
-                    <th class="th">선택</th>
-                    <th class="th">상품이미지</th>
-                    <th class="th">상품정보</th>
-                    <th class="th">배송정보</th>
-                </thead>
-                <tbody>
-                    <% for(var i=0; i<orders.length; i++) { %>
-                        <tr>
-                            <td class="check" style="width: 10%;">
-                                <div class="check">
-                                    <input name="remove" data-id="<%=orders[i].ID%>" type="checkbox">
-                                </div>
-                                
-                            </td>
-                            <td style="width: 20%;">
-                                <div class=" small-img-container">
-                                    <img class=" small-img" src="/public/uploads/<%=orders[i].File1%>">
-                                </div>
-                            </td>
-                            <td style="width: 40%;">
-                                <div class="info-div">
-                                    <label class="gray">주문날짜</label>
-                                    <label class="gray"><%=orders[i].OrderDate%></label>
-                                    <label class="gray">주문번호</label>
-                                    <label class="gray"><%=orders[i].ID%></label>
-                                    <label class="gray">주문상품</label>
-                                    <label class="gray"><%=orders[i].Name%></label>
-                                    <div class="hidden-br"></div>
-                                    <label>상품상태</label>
-                                    <div class="horizontal">
-                                        <select class="status size-12 oragne save-status-select" data-status="<%=orders[i].Status%>" data-id="<%=orders[i].ID%>">
-                                            <option value="1">결제완료</option>
-                                            <option value="2">배송준비</option>
-                                            <option value="3">배송시작</option>
-                                            <option value="4">배송완료</option>
-                                        </select>
-                                        <button type="button" class="btn-trd size-10 save-staus-btn" style="height: 40px;width: 60px;" data-id="<%=orders[i].ID%>">변경</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="order-member-info">
-                                    <label class="gray size-12"><%=orders[i].MemberName+' ('+phone(orders[i].Phone)+')'%></label>    
-                                    <label class="gray size-12"><%=orders[i].MyAddr%></label>
-                                    <hr style="border:  .5px solid #DBDBDB; width: 100%; height: 0px;">
-                                    <select class="trasparent size-12 gray save-invoice-select" data-id="<%=orders[i].ID%>" data-corp="<%=orders[i].Corp?orders[i].Corp:0%>">
-                                        <option value="0">택배회사 선택</option>
-                                        <option value="대한통운">대한통운</option>
-                                        <option value="우체국">우체국</option>
-                                        <option value="로젠택배">로젠택배</option>
-                                    </select>
-                                    <div class=" horizontal">
-                                        <input type="text" class="normal size-10 save-invoice-input" 
-                                        style="width: 200px; margin-right: 10px;" placeholder="송장번호를 입력해주세요."
-                                        value="<%=orders[i].Invoice%>" data-id="<%=orders[i].ID%>">
-                                        <button type="button" class=" btn-trd save-invoice-btn" data-id="<%=orders[i].ID%>">저장</button>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    <% }%>
-                </tbody>
-            </table> 
-            <br><br><br>
-        </section>
-        <%- include('footer') %>
-    </body>
+    <section class="center">
+        <br>
+        <p class="title">주문확인</p>
+        <table class="main">
+            <thead>
+                <th class="th">선택</th>
+                <th class="th">상품이미지</th>
+                <th class="th">상품정보</th>
+                <th class="th">배송정보</th>
+            </thead>
+            <tbody>
+                <% for(var i=0; i<orders.length; i++) { %>
+                <tr>
+                    <td class="check" style="width: 10%;">
+                        <div class="check">
+                            <input name="remove" data-id="<%=orders[i].ID%>" type="checkbox">
+                        </div>
+
+                    </td>
+                    <td style="width: 20%;">
+                        <div class=" small-img-container">
+                            <img class=" small-img" src="/public/uploads/<%=orders[i].File1%>">
+                        </div>
+                    </td>
+                    <td style="width: 40%;">
+                        <div class="info-div">
+                            <label class="gray">주문날짜</label>
+                            <label class="gray"><%=orders[i].OrderDate%></label>
+                            <label class="gray">주문번호</label>
+                            <label class="gray"><%=orders[i].ID%></label>
+                            <label class="gray">주문상품</label>
+                            <label class="gray"><%=orders[i].Name%></label>
+                            <div class="hidden-br"></div>
+                            <label>상품상태</label>
+                            <div class="horizontal">
+                                <select class="status size-12 oragne save-status-select"
+                                    data-status="<%=orders[i].Status%>" data-id="<%=orders[i].ID%>">
+                                    <option value="1">결제완료</option>
+                                    <option value="2">배송준비</option>
+                                    <option value="3">배송시작</option>
+                                    <option value="4">배송완료</option>
+                                </select>
+                                <button type="button" class="btn-trd size-10 save-staus-btn"
+                                    style="height: 40px;width: 60px;" data-id="<%=orders[i].ID%>">변경</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="order-member-info">
+                            <label
+                                class="gray size-12"><%=orders[i].MemberName+' ('+phone(orders[i].Phone)+')'%></label>
+                            <label class="gray size-12"><%=orders[i].MyAddr%></label>
+                            <hr style="border:  .5px solid #DBDBDB; width: 100%; height: 0px;">
+                            <select class="trasparent size-12 gray save-invoice-select" data-id="<%=orders[i].ID%>"
+                                data-corp="<%=orders[i].Corp?orders[i].Corp:0%>">
+                                <option value="0">택배회사 선택</option>
+                                <option value="대한통운">대한통운</option>
+                                <option value="우체국">우체국</option>
+                                <option value="로젠택배">로젠택배</option>
+                            </select>
+                            <div class=" horizontal">
+                                <input type="text" class="normal size-10 save-invoice-input"
+                                    style="width: 200px; margin-right: 10px;" placeholder="송장번호를 입력해주세요."
+                                    value="<%=orders[i].Invoice%>" data-id="<%=orders[i].ID%>">
+                                <button type="button" class=" btn-trd save-invoice-btn"
+                                    data-id="<%=orders[i].ID%>">저장</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <% }%>
+            </tbody>
+        </table>
+        <br><br><br>
+    </section>
+    <%- include('footer') %>
+</body>
+
 </html>

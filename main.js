@@ -46,7 +46,7 @@ app.get('/All', (req, res)=>{
     const user=getUser(req);
     var word=req.query.word;
     sql.getAllItems(null, null, word,(items)=>{
-        res.render('all', {user: user, items:items});
+        res.render('all', {user: user, items:items, word:word});
     });
 })
 
@@ -477,6 +477,18 @@ app.post('/ajax/Maker/Update/Invoice', (req, res)=>{
     }); 
 });
 
+app.post('/ajax/Maker/Update/Status', (req, res)=>{
+    const id=req.body['id'];
+    const status=req.body['status'];
+    sql.updateStatus(id, status, (rs)=>{
+        if(rs) {
+            res.json(ok);
+        } else {
+            res.json(not);
+        }
+    });
+});
+
 app.post('/ajax/Qna', (req, res)=>{
     const title=req.body['title'];
     const content=req.body['content'];
@@ -534,6 +546,20 @@ app.post('/ajax/InsertCart', (req, res)=>{
     sql.addToCart(item, qty, user.userID, (rs)=>{
         res.json(rs);
     });
+});
+
+app.get('/Manager', (req, res)=>{
+    const user=getUser(req);
+    if(user.userCat==3) {
+        sql.getMakerList((maker)=>{
+            sql.getConsumerList((consumer)=>{
+                res.render('manager', {user:user, maker:maker, consumer:consumer});
+            });
+        })
+        
+    } else{
+        noPermission(req);
+    }
 });
 
 app.listen(80, () => {

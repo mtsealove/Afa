@@ -462,6 +462,18 @@ select.status {
     margin-right: 10px;
 }
 
+div.search-result {
+    border-top: .5px solid #EBEBEB;
+    background-color: #F9F9F9;
+    width: 100vw;
+    padding: 15px 0px 15px 0px;
+    color: #222222;
+    text-align: center;
+}
+
+img.banner-manage {
+    width: 80%;
+}
 /* desktop */
 @media(min-width: 768px) {
     div.order-member-info {
