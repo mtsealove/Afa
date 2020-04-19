@@ -116,6 +116,10 @@
     <label class="size-10"><span style="color: #999999;">현재 위치</span> <span id="addr-span">위치를 찾는 중입니다.</span></label>
   </div>
   <div class="horizontal">
+    <% if(user.userCat==3) { %>
+      <a href="/Manager" class="top-nav" data-url="/SignUp">관리자 페이지</a>
+      <label class="top-nav" data-url="/Login">|</label>
+    <% } %>
     <% if(user.userID) { %>
     <label class="top-nav"><a id="logout">로그아웃</a></label>
     <% } else { %>
@@ -146,7 +150,7 @@
   
   <div class="horizontal between" id="big">
     <a href="/All"><span class="nav-item" >전체 상품</span></a>
-    <a><span class="nav-item" >이벤트</span></a>
+    <a href="/Events"><span class="nav-item" >이벤트</span></a>
     <a href="/LocalMarket"><span class="nav-item">로컬마켓이란</span></a>
   </div>
 

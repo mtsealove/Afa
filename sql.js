@@ -547,3 +547,157 @@ exports.getConsumerList=(callback)=>{
         }
     })
 }
+
+exports.updateEvent=(id, path, callback)=>{
+    const getQuery=`select Path from Events where ID=${id}`;
+    connection.query(getQuery, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            if(rs[0]) {
+                try{
+                    var ogPath=`${__dirname}/public/uploads/${rs[0].Path}`;
+                    fs.unlinkSync(ogPath);
+                } catch(e2) {
+                    console.log('file not exist');
+                }
+            }
+            const updateQuery=`update Events set Path='${path}' where ID=${id}`;
+            connection.query(updateQuery, (e1)=>{
+                if(e1) {
+                    console.error(e1);
+                    callback(false);
+                } else {
+                    callback(true);
+                }
+            });
+        }
+    });
+}
+
+exports.getEvents=(callback)=>{
+    const query=`select Path from Events order by ID asc`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getDateStastics=(date, callback)=>{
+    const orderQuery=`select count(*) orderCnt from Orders 
+    where date_format(PayTime, '%Y-%m-%d')='${date}'`;
+    var result={
+        order:0,
+        cancel:0,
+        price:0,
+        signUp:0
+    }
+    connection.query(orderQuery, (e0, orderRs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(result);
+        } else {
+            result.order=orderRs[0].orderCnt;
+            const cancelQuery=`select count(*) cancelCnt from Orders 
+            where date_format(Cancel, '%Y-%m-%d')='${date}'`;
+            connection.query(cancelQuery, (e1, cancelRs)=>{
+                if(e1) {
+                    console.error(e1);
+                    callback(result);
+                } else {
+                    result.cancel=cancelRs[0].cancelCnt;
+                    const priceQuery=`select sum(Price) Price 
+                    from Orders 
+                    where date_format(PayTime, '%Y-%m-%d')='${date}'`;
+                    connection.query(priceQuery, (e2, priceRs)=>{
+                        if(e2) {
+                            console.error(e2);
+                            callback(result);
+                        } else {
+                            result.price=priceRs[0].Price;
+                            const signUpQuery=`select count(*) signUp from Members
+                            Where date_format(SignUpdate, '%Y-%m-%d')='${date}'`;
+                            connection.query(signUpQuery,(e3, signUpRs)=>{
+                                if(e3) {
+                                    console.error(e3);
+                                    callback(result);
+                                } else {
+                                    result.signUp=signUpRs[0].signUp;
+                                    callback(result);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    })
+}
+
+exports.getMonthStastics=(month, callback)=>{
+    const orderQuery=`select count(*) orderCnt from Orders 
+    where date_format(PayTime, '%Y-%m')='${month}'`;
+    var result={
+        order:0,
+        cancel:0,
+        price:0,
+        signUp:0
+    }
+    connection.query(orderQuery, (e0, orderRs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(result);
+        } else {
+            result.order=orderRs[0].orderCnt;
+            const cancelQuery=`select count(*) cancelCnt from Orders 
+            where date_format(Cancel, '%Y-%m')='${month}'`;
+            connection.query(cancelQuery, (e1, cancelRs)=>{
+                if(e1) {
+                    console.error(e1);
+                    callback(result);
+                } else {
+                    result.cancel=cancelRs[0].cancelCnt;
+                    const priceQuery=`select sum(Price) Price 
+                    from Orders 
+                    where date_format(PayTime, '%Y-%m')='${month}'`;
+                    connection.query(priceQuery, (e2, priceRs)=>{
+                        if(e2) {
+                            console.error(e2);
+                            callback(result);
+                        } else {
+                            result.price=priceRs[0].Price;
+                            const signUpQuery=`select count(*) signUp from Members
+                            Where date_format(SignUpdate, '%Y-%m')='${month}'`;
+                            connection.query(signUpQuery,(e3, signUpRs)=>{
+                                if(e3) {
+                                    console.error(e3);
+                                    callback(result);
+                                } else {
+                                    result.signUp=signUpRs[0].signUp;
+                                    callback(result);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    })
+}
+
+exports.createQna=(user, title, contents, callback)=>{
+    const query=`insert into Q set title='${title}', Contents='${contents}', Owner='${user}'`;
+    connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>이벤트</title>
+        <%- include('config') %>
+    </head>
+    <body>
+        <%- include('top') %>
+        <section class="center">
+            <p class="title">이벤트</p>
+            <% for(var i=0; i<events.length; i++) { %>
+                <img class="banner" src="/public/uploads/<%=events[i].Path%>">
+                <br>
+            <% } %>
+        </section>
+        <%- include('footer') %>
+    </body>
+</html>

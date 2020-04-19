@@ -33,10 +33,44 @@ app.use(cookie_parser());
 app.get('/', (req, res) => {
     const user=getUser(req); 
     sql.getNewitems((news)=>{
-        res.render('index', {user:user, news:news});
+        sql.getEvents((events)=>{
+            res.render('index', {user:user, news:news, events:events});
+        });
     });
 });
 
+app.get('/Events', (req, res)=>{
+    const user=getUser(req);
+    sql.getEvents((events)=>{
+        res.render('events', {user:user, events:events});
+    });
+});
+app.get('/QnA', (req, res)=>{
+    const user=getUser(req);
+    res.render('qna', {user:user});
+}); 
+
+app.get('/Ask', (req, res)=>{
+    const user=getUser(req);
+    if(user.userID) {
+        res.render('ask', {user:user});
+    } else {
+        res.send(`<script>alert('로그인 후 이용해 주세요.');history.go(-1);</script>`);
+    }
+});
+
+app.post('/Ask', (req, res)=>{
+    const user=getUser(req);
+    const title=req.body['title'];
+    const contents=req.body['contents'];
+    sql.createQna(user.userID, title, contents, (rs)=>{
+        if(rs) {
+            res.send(`<script>alert('문의사항이 등록되었습니다.');location.href='/QnA';</script>`);
+        } else {
+            res.send(`<script>alert('오류가 발생하였습니다.');</script>`);
+        }
+    });
+});
 app.get('/LocalMarket', (req, res)=>{
     const user=getUser(req);
     res.render('localmarket', {user:user});
@@ -553,13 +587,42 @@ app.get('/Manager', (req, res)=>{
     if(user.userCat==3) {
         sql.getMakerList((maker)=>{
             sql.getConsumerList((consumer)=>{
-                res.render('manager', {user:user, maker:maker, consumer:consumer});
+                sql.getEvents((events)=>{
+                    res.render('manager', {user:user, maker:maker, consumer:consumer, events:events});
+                });
             });
-        })
-        
+        });
     } else{
         noPermission(req);
     }
+});
+
+app.get('/ajax/Manage/Get/Stastics/Date', (req, res)=>{
+    const date=req.query.date;
+    sql.getDateStastics(date, (rs)=>{
+        res.json(rs);
+    });
+});
+app.get('/ajax/Manage/Get/Stastics/Month', (req, res)=>{
+    const month=req.query.month;
+    sql.getMonthStastics(month, (rs)=>{
+        res.json(rs);
+    });
+});
+
+app.post('/ajax/Manager/Update/Event', upload.single('event_file'), (req, res)=>{
+    const file=req.file.filename;
+    const priority=req.body['priority'];
+
+    sql.updateEvent(priority, file, (rs)=>{
+        if(rs) {
+            var ok1=ok;
+            ok1.Path=file;
+            res.json(ok1);
+        } else {
+            res.json(not);
+        }
+    })
 });
 
 app.listen(80, () => {

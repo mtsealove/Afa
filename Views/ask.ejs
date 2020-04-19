@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>문의하기</title>
+        <%- include('config') %>
+        <script>
+            $(function() {
+                $('#confirm-btn').click(function() {
+                    if(checkInput()) {
+                        if(confirm('문의사항을 등록하시겠습니까?')) {
+                            $('#form').submit();
+                        }
+                    }
+                })
+            });
+            function checkInput() {
+                const title=$('#title').val();
+                const contents=$('#contents').val();
+                if(title=='') {
+                    alert('제목을 입력하세요.');
+                    return false;
+                } else  if(contents=='') {
+                    alert('내용을 입력하세요.');
+                    return false;
+                } else return true;
+            }
+        </script>
+    </head>
+    <body>
+        <%- include('top') %>
+        <hr class="divider">
+        <section class="center" style="background-color: #F9F9F9;">
+            <p class=" title">문의 작성</p>
+            <form class=" main-contents" id="form" method="POST" action="/Ask">
+                <label class="size-15">제목</label><br><br>
+                <input type="text" name="title" class="normal" placeholder="제목을 입력하세요." id="title">
+                <br><br>
+                <label class="size-15">내용</label><br><br>
+                <textarea rows="15" class="normal" placeholder="내용을 입력하세요." id="contents" name="contents"></textarea><br><br>
+                <button type="button" class=" btn-main btn-block" id="confirm-btn">작성하기</button>
+            </form>
+            <br><br>
+        </section>
+        <%- include('footer') %>
+    </body>
+</html>

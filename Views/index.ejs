@@ -45,9 +45,7 @@
     <%- include('recent') %>
     <%- include('top') %>
     <section>
-        <div id="top-banner">
-
-        </div>
+        <img src="/public/uploads/<%=events[0].Path%>" style="width: 100vw;">
         <div class="center">
             <br>
             <h3 class="h gray">신상품 ></h3>
@@ -75,7 +73,8 @@
             <div class="grid-4" id="best-div">
 
             </div>
-
+            <br>
+            <img src="/public/uploads/<%=events[1].Path%>" class="main-banner">
             <h3 class=" h gray">MD’s Pick</h3>
             <div class="grid-4">
                 <% for(var i=0; i<news.length; i++) { %>
@@ -88,6 +87,8 @@
                 </div>
                 <% } %>
             </div>
+            <br>
+            <img src="/public/uploads/<%=events[2].Path%>" class="main-banner">    
         </div>
         <br><br><br><br>
     </section>

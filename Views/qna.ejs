@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>고객센터</title>
+        <%- include('config') %>
+    </head>
+    <body>
+        <%- include('top') %>
+        <section class="center">
+            <p class="title">고객센터</p>
+            <div class="main-contents">
+                <p class=" size-14 gray">자주 문의하는 질문</p>
+                <p class="size-11 gray">• 사용에 대한 문의를 남기는 공간입니다. 해당 게시판의 성격과 다른 글은 사전동의 없이 담당 게시판으로 이동될 수 있습니다.</p>
+                <div class="faq-div">
+                    <label class="size-11 gray">• 배송관련, 주문(취소/교환/환불)관련 문의 및 요청사항은 고객센터에 1:1문의를 남겨주세요.</label>
+                    <select class="normal" style="width: 100px;">
+                        <option>최근등록순</option>
+                    </select>
+                </div>
+                <br>
+                <table style="width: 100%;">
+                    <thea class="thead">
+                        <th class="th">#</th>
+                        <th class="th">제목</th>
+                        <th class="th">작성자</th>
+                        <th class="th">작성일</th>
+                        <th class="th">조회</th>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <br>
+                <div class="faq-div">
+                    <div class="qna">
+                        <p class="gray size-13">싸투리 문의</p>
+                        <button type="button" class=" btn-trd" onclick="location.href='/Ask'">문의 작성</button>
+                        <br>
+                        <label class="light-gray size-10" style="text-align: center;">평일 9:00 ~ 18:00
+                            <br>주말/공휴일 10:00 ~ 17:00</label>
+                    </div>
+                    <div class="qna">
+                        <p class="gray size-13">고객센터</p>
+                        <p class=" size-15">010 - 3738 - 5647</p>
+                        <label class="light-gray size-10" style="text-align: center;">평일 9:00 ~ 18:00
+                            <br>주말/공휴일 10:00 ~ 17:00</label>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <%- include('footer') %>
+    </body>
+</html>
