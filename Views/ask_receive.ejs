@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>문의하기</title>
+    <%- include('config') %>
+    <script>
+        $(function() {
+            $('#btn').click(function() {
+                if(checkInput()&&confirm('답변을 등록하시겠습니까?')) {
+                    $('#form').submit();
+                }
+            });
+        });
+
+        function checkInput() {
+            if($('#contents').val()=='') {
+                alert('내용을 입력하세요.');
+                return false;
+            } else {
+                return true;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('top') %>
+    <hr class="divider">
+    <section class="center" style="background-color: #F9F9F9;">
+        <div class=" main-contents">
+            <p class="size-15">문의 사항</p>
+            <div class=" normal horizontal between">
+                <label><%=ask.Title%></label>
+                <label>작성 시간: <%=ask.AskDate%></label>
+            </div>
+            <pre class="normal"><%=ask.AskContents%></pre>
+
+            <p class="size-15">답변</p>
+            <form method="POST" action="/Manager/Ask/Recevie" id="form">
+                <input type="number" value="<%=ask.ID%>" hidden name="id">
+                <textarea class=" normal" rows="15" name="contents" id="contents" placeholder="문의사항 답변을 작성하세요."></textarea>
+                <br><br>
+                <button type="button" class=" btn-main btn-block" id="btn">작성하기</button>
+                <br><br>
+            </form>
+        </div>
+    </section>
+    <%- include('footer') %>
+</body>
+
+</html>

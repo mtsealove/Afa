@@ -3,6 +3,47 @@
     <head>
         <title>고객센터</title>
         <%- include('config') %>
+        <script>
+            $(function() {
+                getAsk(0);
+                setPage();
+            });
+
+            function moveDetail() {
+                $('.tr').click(function() {
+                    const id=$(this).data('id');
+                    location.href=`/Ask/Detail/${id}`;
+                });
+            }
+
+            function getAsk(page) {
+                const table=$('#ask-table');
+                var html=``;
+                $.get(`/ajax/Get/Ask?page=${page}`, function(data){
+                    for(item of data) {
+                        html+=`
+                        <tr style='text-align:center; height:40px;' class='point tr' data-id='${item.ID}'>
+                            <td style='width:20%' class='gray'><b>${item.ID}</b></td>
+                            <td style='width:30%; text-align:left' class='gray'>${item.Title}</td>
+                            <td style='width:20%' class='gray'>${item.Owner}</td>
+                            <td style='width:25%' class='gray size-11'>${item.Date}</td>
+                            <td style='width:5%' class='gray'>${item.Click.toLocaleString()}</td>
+                        </tr>
+                        `
+                    }
+                    table.html(html);
+                    moveDetail();
+                });
+            }
+            function setPage() {
+                $('.page-index').click(function(){
+                    $('.page-active').removeClass('page-active');
+                    $(this).addClass('page-active');
+                    const page=$(this).data('page');
+                    getAsk(page);
+                });
+            }
+        </script>
     </head>
     <body>
         <%- include('top') %>
@@ -26,10 +67,25 @@
                         <th class="th">작성일</th>
                         <th class="th">조회</th>
                     </thead>
-                    <tbody>
+                    <tbody id="ask-table">
 
                     </tbody>
                 </table>
+                <br>
+                <div id="page-container">
+                    <div class="page" onclick="getAsk(0)"><<</div>
+                    <div class="page"><</div>
+                    
+                    <% for(var i=0; i<cnt; i++) { %>
+                        <% if(i==0) { %>
+                            <div class="page page-index page-active" data-page="<%=i%>"><%=i+1%></div>
+                        <% } else { %>
+                            <div class="page page-index" data-page="<%=i%>"><%=i+1%></div>
+                        <% } %>
+                    <% }%>
+                    <div class="page">></div>
+                    <div class="page">>></div>
+                </div>
                 <br>
                 <div class="faq-div">
                     <div class="qna">

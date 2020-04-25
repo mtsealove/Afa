@@ -4,6 +4,17 @@
 <head>
     <title>전체 상품</title>
     <%- include('config') %>
+    <script>
+        $(function(){
+            setItemClick();
+        })
+        function setItemClick() {
+            $('.item').click(function () {
+                const id = $(this).data('id');
+                location.href = `/Item/${id}`;
+            });
+        }
+    </script>
 </head>
 
 <body>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>문의하기</title>
+    <%- include('config') %>
+</head>
+
+<body>
+    <%- include('top') %>
+    <hr class="divider">
+    <section class="center" style="background-color: #F9F9F9;">
+        <div class=" main-contents">
+            <p class="size-15">문의 사항</p>
+            <div class=" normal horizontal between">
+                <label><%=ask.Title%></label>
+                <label>작성 시간: <%=ask.AskDate%></label>
+            </div>
+            <pre class="normal"><%=ask.AskContents%></pre>
+
+            <p class="size-15">답변</p>
+            <% if(ask.ReceiveContents) { %>
+                <p class=" normal">작성 시간: <%=ask.ReceiveDate%></p>
+                <pre class="normal"><%=ask.ReceiveContents%></pre>
+            <% } else { %>
+                <p class="normal">아직 등록된 답변이 없습니다.</p>
+            <% } %>
+        </div>
+    </section>
+    <%- include('footer') %>
+</body>
+
+</html>

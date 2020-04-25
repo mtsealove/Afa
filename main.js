@@ -28,6 +28,10 @@ app.use(session({
 }));
 app.use('/public', express.static('public'));
 app.use(cookie_parser());
+app.use(function(req, res, next){
+    const ip=getUserIP(req);
+    next();
+})
 
 // index page
 app.get('/', (req, res) => {
@@ -47,8 +51,17 @@ app.get('/Events', (req, res)=>{
 });
 app.get('/QnA', (req, res)=>{
     const user=getUser(req);
-    res.render('qna', {user:user});
+    sql.getAskCount((cnt)=>{
+        res.render('qna', {user:user, cnt:cnt});
+    });
 }); 
+
+app.get('/ajax/Get/Ask', (req, res)=>{
+    const page=req.query.page;
+    sql.getAskList(page, (rs)=>{
+        res.json(rs);
+    });
+});
 
 app.get('/Ask', (req, res)=>{
     const user=getUser(req);
@@ -59,11 +72,20 @@ app.get('/Ask', (req, res)=>{
     }
 });
 
+app.get('/Ask/Detail/:id', (req, res)=>{
+    const user=getUser(req);
+    const id=req.param('id');
+    sql.getAskDetail(id, (rs)=>{
+        res.render('ask_detail', {user:user, ask:rs});
+    });
+});
+
+
 app.post('/Ask', (req, res)=>{
     const user=getUser(req);
     const title=req.body['title'];
     const contents=req.body['contents'];
-    sql.createQna(user.userID, title, contents, (rs)=>{
+    sql.createAsk(user.userID, title, contents, (rs)=>{
         if(rs) {
             res.send(`<script>alert('문의사항이 등록되었습니다.');location.href='/QnA';</script>`);
         } else {
@@ -593,8 +615,39 @@ app.get('/Manager', (req, res)=>{
             });
         });
     } else{
-        noPermission(req);
+        noPermission(res);
     }
+});
+
+app.get('/ajax/Manage/Get/Ask', (req, res)=>{
+    sql.getNotReceiveAsk((rs)=>{
+        res.json(rs);
+    });
+});
+
+
+app.get('/Manager/Ask/Recevie', (req, res)=>{
+    const user=getUser(req);
+    const id=req.query.id;
+    if(user.userCat!=3) {
+        noPermission(res);
+    } else {
+        sql.getAskDetail(id, (ask)=>{
+            res.render('ask_receive', {user:user, ask:ask});
+        });
+    }
+});
+
+app.post('/Manager/Ask/Recevie', (req, res)=>{
+    const id=req.body['id'];
+    const contents=req.body['contents'];
+    sql.createAskReceive(id, contents, (rs)=>{
+        if(rs){
+            res.send(`<script>alert('답변이 등록되었습니다.');location.href='/Manager';</script>`);
+        } else {
+            res.send(`<script>alert('오류가 발생하였습니다.');</script>`);
+        }
+    });
 });
 
 app.get('/ajax/Manage/Get/Stastics/Date', (req, res)=>{
@@ -628,6 +681,10 @@ app.post('/ajax/Manager/Update/Event', upload.single('event_file'), (req, res)=>
 app.listen(80, () => {
     console.log('afa runnings');
 });
+function getUserIP(req) {
+    const addr = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    return addr
+  }
 
 function noPermission(res)  {
     res.send(`<script>alert('접근 권한이 없습니다.');history.go(-1)</script>`);

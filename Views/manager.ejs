@@ -11,6 +11,7 @@
             setImageBtns();
             setEvents();
             setStatsticsDate();
+            getAsks();
         });
         function setTabs() {
             $('.my-tab').click(function () {
@@ -131,6 +132,28 @@
             inputDate.attr('max', dateStr);
             inputDate.val(dateStr).trigger('change');
         }
+
+        function getAsks() {
+            var html='';
+            $.get('/ajax/Manage/Get/Ask', (data)=>{
+                console.log(data);
+                for(item of data) {
+                    html+=`
+                    <tr style='text-align:center; height:40px' class='point ask-tr' data-id='${item.ID}'>
+                        <td style='width:10%'>${item.ID}</td>
+                        <td style='width:30%'>${item.Title}</td>
+                        <td style='width:20%'>${item.Name}/${item.Owner}</td>
+                        <td style='width:20%'>${item.Phone}</td>
+                        <td style='width:20%'>${item.Date}</td>
+                    </tr>`
+                }
+                $('#ask-body').html(html);
+                $('.ask-tr').click(function() {
+                    const id=$(this).data('id');
+                    location.href=`/Manager/Ask/Recevie?id=${id}`;
+                });
+            });
+        }
     </script>
 </head>
 
@@ -155,7 +178,7 @@
                 <div class="my-tab point" data-div="div-design">
                     <p>이벤트 관리</p>
                 </div>
-                <div class="my-tab point">
+                <div class="my-tab point" data-div="div-ask">
                     <p>문의 관리</p>
                 </div>
             </div>
@@ -354,6 +377,22 @@
                         <button type="button" class="btn-main img-btn" data-event="event4">변경</button>
                     </div>
                     <br><br>
+                </div>
+                <!-- 문의사항 관리 -->
+                <div class="manager-div" id="div-ask">
+                    <p class="size-15">미 답변된 문의</p>
+                    <table style="width: 100%;">
+                        <thead class="thead">
+                            <th class="th">#</th>
+                            <th class="th">제목</th>
+                            <th class="th">문의자<br>(이름/ID)</th>
+                            <th class="th">연락처</th>
+                            <th class="th">작성시간</th>
+                        </thead>
+                        <tbody id="ask-body">
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
