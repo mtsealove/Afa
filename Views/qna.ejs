@@ -73,18 +73,18 @@
                 </table>
                 <br>
                 <div id="page-container">
-                    <div class="page" onclick="getAsk(0)"><<</div>
-                    <div class="page"><</div>
-                    
-                    <% for(var i=0; i<cnt; i++) { %>
+                    <div class="page" onclick="getAsk(0)">&lt;&lt;</div>
+                    <div class="page">&lt;</div>
+                    <% var max=cnt>10?10: cnt; %>
+                    <% for(var i=0; i<max; i++) { %>
                         <% if(i==0) { %>
                             <div class="page page-index page-active" data-page="<%=i%>"><%=i+1%></div>
                         <% } else { %>
                             <div class="page page-index" data-page="<%=i%>"><%=i+1%></div>
                         <% } %>
                     <% }%>
-                    <div class="page">></div>
-                    <div class="page">>></div>
+                    <div class="page">&gt;</div>
+                    <div class="page">&gt;&gt;</div>
                 </div>
                 <br>
                 <div class="faq-div">

@@ -30,6 +30,7 @@ app.use('/public', express.static('public'));
 app.use(cookie_parser());
 app.use(function(req, res, next){
     const ip=getUserIP(req);
+    sql.addVisiter(getDate(),ip);
     next();
 })
 
@@ -41,6 +42,13 @@ app.get('/', (req, res) => {
             res.render('index', {user:user, news:news, events:events});
         });
     });
+});
+
+app.get('/ajax/Session', (req, res)=>{
+    const loc=req.query.loc;
+    req.session.loc=loc;
+    console.log(req.session.loc);
+    res.json(ok);
 });
 
 app.get('/Events', (req, res)=>{
@@ -438,10 +446,20 @@ app.get('/Maker/Item/Manage', (req, res)=>{
 });
 app.get('/Maker/Item/Register', (req, res)=>{
     const user=getUser(req);
+    const itemID=req.query.item;
     if(user.userCat==1) {
-        sql.getCat((cat)=>{
-            res.render('register_item', {user:user, cat: cat});
-        });
+        //신규 등록
+        if(!itemID) {
+            sql.getCat((cat)=>{
+                res.render('register_item', {user:user, cat: cat, item:null});
+            });
+        } else {
+            sql.getCat((cat)=>{
+                sql.getItem(itemID, (item)=>{
+                    res.render('register_item', {user:user, cat: cat, item:item});
+                });
+            });
+        }
     } else {
         noPermission(res);
     }
@@ -468,9 +486,17 @@ app.post('/Maker/Item/Register', upload.array('file', 3), (req, res)=>{
     const unit=req.body['unit'];
     const reqDelivery=req.body['delivery'];
     var delivery='';
+    const pesticide=req.body['pesticide'];
     const pack=req.body['pack'];
-    const file1=req.files[0].filename;
-    const file2=req.files[1].filename;
+    var file1=null;
+    if(req.files[0]) {
+        file1=req.files[0].filename;
+    }
+    var file2=null;
+    if(req.files[1]) {
+        file2=req.files[1].filename;
+    }
+    const id=req.body['id'];
     var file3=null;
     if(req.files[2]) {
        file3=req.files[2].filename;
@@ -486,13 +512,23 @@ app.post('/Maker/Item/Register', upload.array('file', 3), (req, res)=>{
     } else {
         delivery=reqDelivery;
     }
-    sql.createItem(user.userID, name, des, addr, date, price,file1, file2, file3, cat,unit, delivery, pack, (rs)=>{
-        if(rs) {
-            res.send(`<script>alert('상품이 등록되었습니다.');location.href='/Maker/Items';</script>`);
-        } else {
-            res.send(`<script>alert('오류가 발생하였습니다.');history.go(-1);</script>`);
-        }
-    });
+    if(!id) {
+        sql.createItem(user.userID, name, des, addr, date, price,file1, file2, file3, cat,unit, delivery, pack, pesticide,(rs)=>{
+            if(rs) {
+                res.send(`<script>alert('상품이 등록되었습니다.');location.href='/Maker/Items';</script>`);
+            } else {
+                res.send(`<script>alert('오류가 발생하였습니다.');history.go(-1);</script>`);
+            }
+        });
+    } else {
+        sql.updateOgItem(id,user.userID, name, des, addr, date, price,file1, file2, file3, cat,unit, delivery, pack, pesticide,(rs)=>{
+            if(rs) {
+                res.send(`<script>alert('상품이 수정되었습니다.');location.href='/Maker/Items';</script>`);
+            } else {
+                res.send(`<script>alert('오류가 발생하였습니다.');history.go(-1);</script>`);
+            }
+        });
+    }
 });
 
 app.post('/ajax/Maker/Remove/Item', (req, res)=>{
@@ -653,13 +689,19 @@ app.post('/Manager/Ask/Recevie', (req, res)=>{
 app.get('/ajax/Manage/Get/Stastics/Date', (req, res)=>{
     const date=req.query.date;
     sql.getDateStastics(date, (rs)=>{
-        res.json(rs);
+        sql.getVisister(date, (cnt)=>{
+            rs.Visit=cnt;
+            res.json(rs);
+        });
     });
 });
 app.get('/ajax/Manage/Get/Stastics/Month', (req, res)=>{
     const month=req.query.month;
     sql.getMonthStastics(month, (rs)=>{
-        res.json(rs);
+        sql.getMonthVisiter(month, (cnt)=>{
+            rs.Visit=cnt;
+            res.json(rs);
+        });
     });
 });
 
@@ -676,6 +718,20 @@ app.post('/ajax/Manager/Update/Event', upload.single('event_file'), (req, res)=>
             res.json(not);
         }
     })
+});
+
+app.get('/ajax/Manage/OrderStatus', (req, res)=>{
+    const date=req.query.date;
+    sql.getOrderStatus(date, (rs)=>{
+        res.json(rs);
+    });
+});
+
+app.get('/ajax/Manage/OrderByStatus', (req, res)=>{
+    const sts=req.query.status;
+    sql.getOrderByStatus(sts, (rs)=>{
+        res.json(rs);
+    });
 });
 
 app.listen(80, () => {
@@ -699,4 +755,18 @@ function getUser(req) {
         userName: name,
         userCat: cat
     }
+}
+
+function getDate() {
+    var date = new Date();
+    var str = date.getUTCFullYear() + '-';
+    if (date.getMonth() < 9) {
+        str += '0';
+    }
+    str += (date.getMonth() + 1) + '-';
+    if (date.getDate() < 10) {
+        str += '0';
+    }
+    str += date.getDate();
+    return str;
 }

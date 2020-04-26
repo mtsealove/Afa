@@ -13,6 +13,7 @@
     
     setLogo();
     setSearch();
+    setLocatoion();
   });
 
   function setNav() {
@@ -106,6 +107,14 @@
         }
     });
   }
+
+  function setLocatoion() { 
+    $('#loc-select').change(function() {
+        const loc=$(this).val();
+        $.get(`/ajax/Session?loc=${loc}`, (data)=>{
+        });
+    });
+  }
 </script>
 <div class="top-banner">
   <label>이제는 로컬 푸드로 밥상을 준비해보세요.</label>
@@ -141,10 +150,10 @@
 <nav class="horizontal between nav-main">
   <div class=" horizontal">
     <img src="/public/images/menu.png" width="24" height="24">
-    <select class="nav-item trasparent size-12" style="margin-left: 10px;">
-      <option>생산지역 모두보기</option>
-      <option>천안</option>
-      <option>생산지역 모두보기</option>
+    <select class="nav-item trasparent size-12" style="margin-left: 10px;" id="loc-select">
+      <option value="">생산지역 모두보기</option>
+      <option value="천안">천안</option>
+      <option value="아산">아산</option>
     </select>
   </div>
   

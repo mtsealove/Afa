@@ -9,33 +9,41 @@
         $(function () {
             setSearchAddr();
             setImageBtn();
-            $('#register-btn').click(function() {
-                checkInput(); 
+            $('#register-btn').click(function () {
+                checkInput();
             });
+            setMakeAddr();
         });
         function setSearchAddr() {
             $('#search-my-addr-btn').click(function () {
                 new daum.Postcode({
                     oncomplete: function (data) {
-                        $('#make-addr').val(data.roadAddress);
+                        $('#make-addr').val(data.roadAddress).trigger('change');
                     }
                 }).open();
             });
         }
         function setImageBtn() {
             const files = $('input[name="file"]');
-            const imgs=$('.preview-contents');
+            const imgs = $('.preview-contents');
 
-            $('#file0').change(function (){
+            $('#file0').change(function () {
                 readURL(this, $('#img0'));
+                $('#image-btn').text('설명 이미지1 찾기');
             });
-            $('#file1').change(function (){
+            $('#file1').change(function () {
                 readURL(this, $('#img1'));
+                $('#image-btn').text('설명 이미지2 찾기');
             })
-            $('#file2').change(function (){
+            $('#file2').change(function () {
                 readURL(this, $('#img2'));
-            })
-            
+                $('#image-btn').text('이미지는 3장까지 추가할 수 있습니다.');
+                $('#image-btn').attr('disabled', true);
+                $('#image-btn').removeClass('btn-main');
+                $('#image-btn').addClass('btn-trd');
+                $('#image-btn').css('cursor', 'text');
+            });
+
             $('#image-btn').click(function () {
                 var index = -1;
                 for (var i = 0; i < files.length; i++) {
@@ -52,12 +60,12 @@
             });
         }
 
-         //화면에 이미지 표시
-         function readURL(input, img) {
+        //화면에 이미지 표시
+        function readURL(input, img) {
             img.show();
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     img.attr('src', e.target.result);
                     img.fadeIn();
                 }
@@ -68,52 +76,72 @@
         }
 
         function checkInput() {
-            const file0=$('#file0').val();
-            const file1=$('#file1').val();
-            const name=$('#name').val();
-            const des=$('#des').val();
-            const make_addr=$('#make-addr').val();
-            const date=$('#date').val();
-            const price=$('#price').val();
-            const unit=$('#unit').val();
-            const delivery=$(`input[name='delivery']:checked`).length;
-            const pack=$('#pack').val();
+            const file0 = $('#img0').attr('src');
+            const file1 = $('#img1').attr('src');
+            const name = $('#name').val();
+            const des = $('#des').val();
+            const make_addr = $('#make-addr').val();
+            const date = $('#date').val();
+            const price = $('#price').val();
+            const unit = $('#unit').val();
+            const delivery = $(`input[name='delivery']:checked`).length;
+            const pack = $('#pack').val();
+            const make_addr2 = $('#make-addr2').val();
 
-            if(file0=='') {
+            if (file0 == '') {
                 alert('대표 이미지 파일을 선택하세요.');
                 return;
-            } else if(file1=='') {
+            } else if (file1 == '') {
                 alert('설명 이미지 파일을 선택하세요.');
                 return;
-            } else if(name=='') {
+            } else if (name == '') {
                 alert('상품 이름을 입력하세요.');
                 return;
-            } else if(des=='') {
+            } else if (des == '') {
                 alert('상품 소개를 입력하세요');
                 return;
-            } else if(make_addr=='') {
+            } else if ((make_addr == ''||make_addr2 == '')&&$('#og-addr').text()=='') {
                 alert('생산지를 입력하세요.');
                 return;
-            } else if(date=='') {
+            } else if (date == '') {
                 alert('생산 날짜를 입력하세요.');
                 return;
-            } else  if(unit=='') {
+            } else if (unit == '') {
                 alert('판매 단위를 입력하세요.');
                 return;
-            } else if(delivery==0) {
+            } else if (delivery == 0) {
                 alert('배송 구분을 1개 이상 선택하세요');
                 return;
-            } else  if(pack=='') {
+            } else if (pack == '') {
                 alert('포장 타입을 입력하세요.');
                 return;
-            } else if(price=='') {
+            } else if (price == '') {
                 alert('가격을 입력하세요.');
                 return;
             } else {
-                if(confirm('상품을 등록하시겠습니까?')) {
+                if (confirm('상품을 등록하시겠습니까?')) {
                     $('#form').submit();
                 }
-            }   
+            }
+        }
+
+        function setMakeAddr() {
+            const make_addr = $('#make-addr');
+            const make_addr2 = $('#make-addr2');
+            const make_addr3 = $('#make-addr3');
+            make_addr.change(function () {
+                const addr1 = make_addr.val();
+                const addr2 = make_addr2.val();
+                const addr3 = addr1 + ' ' + addr2;
+                make_addr3.val(addr3);
+            });
+            make_addr2.change(function () {
+                const addr1 = make_addr.val();
+                const addr2 = make_addr2.val();
+                const addr3 = addr1 + ' ' + addr2;
+                make_addr3.val(addr3);
+                $('#og-addr').text(addr3);
+            });
         }
     </script>
 </head>
@@ -125,42 +153,67 @@
         <p class="title">상품 등록</p>
         <div class=" signup-form">
             <form enctype="multipart/form-data" method="POST" id="form" action="/Maker/Item/Register">
+                <% if(item) {%>
+                <input value="<%=item.ID%>" name="id" hidden>
+                <% } %>
                 <div class=" signup-div">
                     <label class="signup-label">상품 이미지</label>
-                    <button type="button" class="btn-main" style="width: 120px;" id="image-btn">이미지 찾기</button>
+                    <div>
+                        <button type="button" class="btn-main" id="image-btn">상품 이미지 찾기</button>
+                    </div>
                 </div>
                 <div class=" signup-div">
                     <label></label>
                     <div class=" horizontal">
                         <div class="preview-img">
-                            <input type="file" name="file" accept="image/*" hidden id="file0">
-                            <img class="preview-contents" hidden id="img0">
+                            <input type="file" name="file" accept="image/*" hidden id="file0" >
+                            <img class="preview-contents" id="img0" src="/public/uploads/<%=item?item.File1:''%>"
+                                alt="상품 이미지1">
                         </div>
                         <div class="preview-img">
-                            <input type="file" name="file" accept="image/*" hidden id="file1">
-                            <img class="preview-contents" hidden id="img1">
+                            <input type="file" name="file" accept="image/*" hidden id="file1" value="<%=item?item.File2:''%>">
+                            <img class="preview-contents" id="img1" src="/public/uploads/<%=item?item.File2:''%>"
+                                alt="상품 이미지2">
                         </div>
                         <div class="preview-img">
-                            <input type="file" name="file" accept="image/*" hidden id="file2">
-                            <img class="preview-contents" hidden id="img2">
+                            <input type="file" name="file" accept="image/*" hidden id="file2" <%=item?item.File3:''%>>
+                            <img class="preview-contents" id="img2" src="/public/uploads/<%=item?item.File3:''%>"
+                                alt="상품 이미지3">
                         </div>
                     </div>
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">상품 이름</label>
-                    <input class="size-11 normal" type="text" placeholder="상품 이름을 입력해주세요." id="name" name="name">
+                    <input class="size-11 normal" type="text" placeholder="상품 이름을 입력해주세요." id="name" name="name"
+                        value="<%=item?item.Name:''%>">
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">상품 종류</label>
                     <select name="cat" class=" size-12 signup-input normal">
+
                         <% for(var i=0; i<cat.length; i++) { %>
-                            <option value="<%=cat[i].ID%>"><%=cat[i].Name%></option>
+                        <option value="<%=cat[i].ID%>" <%=item.Cat==cat[i].ID?'checked':''%>><%=cat[i].Name%></option>
                         <% } %>
                     </select>
                 </div>
                 <div class=" signup-div">
+                    <label class="signup-label">농약 사용 여부</label>
+                    <div class="horizontal">
+                        <div>
+                            <input type="radio" id="pesticide-n" checked name="pesticide" value="false">
+                            <label for="pesticide-n">미사용</label>
+                        </div>
+                        <div style="margin-left: 10px;">
+                            <input type="radio" id="pesticide-y" name="pesticide" value="true"
+                                <%=item.Pesticide?'checked':''%>>
+                            <label for="pesticide-y">사용</label>
+                        </div>
+                    </div>
+                </div>
+                <div class=" signup-div">
                     <label class="signup-label">상품 소개</label>
-                    <input class="size-11 normal" type="text" placeholder="간단한 상품 소개를 입력해주세요." name="des" id="des">
+                    <input class="size-11 normal" type="text" placeholder="간단한 상품 소개를 입력해주세요." name="des" id="des"
+                        value="<%=item.Des?item.Des:''%>">
                 </div>
 
                 <div class=" horizontal between signup-div">
@@ -169,32 +222,59 @@
                     <label></label>
                 </div>
                 <div class=" horizontal between signup-div">
+
                     <label></label>
-                    <input readonly class=" input-line" id="make-addr" placeholder="주소를 검색해주세요." name="make_addr">
+                    <input readonly class=" input-line" id="make-addr" placeholder="주소를 검색해주세요.">
                     <label></label>
+                    <label></label>
+                    <input class=" input-line" id="make-addr2" placeholder="상세 주소를 입력해주세요.">
+                    <input name="make_addr" id="make-addr3" value="<%=item.Addr%>" hidden>
+                    <label></label>
+                    <% if(item) { %>
+                        <label></label>
+                        <label class=" normal" id="og-addr"><%=item.Addr%></label>
+                    <% } %>
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">생산 날짜</label>
+                    <script>
+                        $(function () {
+                            var date = new Date('<%=item.MDate%>');
+                            var dateStr = date.getFullYear() + '-';
+                            if (date.getMonth() < 9) {
+                                dateStr += '0';
+                            }
+                            dateStr += (date.getMonth() + 1) + '-';
+                            if (date.getDate() < 10) {
+                                dateStr += '0';
+                            }
+                            dateStr += date.getDate();
+                            $('#date').val(dateStr);
+                        });
+                    </script>
                     <input class="size-11 normal" type="date" name="date" id="date">
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">판매단위</label>
-                    <input class="size-11 normal" type="text" name="unit" id="unit" placeholder="ex) 1Kg">
+                    <input class="size-11 normal" type="text" name="unit" id="unit" placeholder="ex) 1Kg" value="<%=item.Unit%>">
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">배송 구분</label>
                     <div class="horizontal">
-                        <input name="delivery" type="checkbox" value="택배배송" id="delivery-post"><label for="delivery-post" class="size-11 gray">택배배송</label>
-                        <input name="delivery" type="checkbox" value="방문수령" id="delivery-take"><label for="delivery-take" class="size-11 gray">방문수령</label>
+                        
+                        <input name="delivery" type="checkbox" value="택배배송" id="delivery-post" <%=item.Delivery.indexOf('택배배송')!=-1?'checked':''%>>
+                        <label for="delivery-post" class="size-11 gray">택배배송</label>
+                        <input name="delivery" type="checkbox" value="방문수령" id="delivery-take" <%=item.Delivery.indexOf('방문수령')!=-1?'checked':''%>>
+                        <label for="delivery-take" class="size-11 gray">방문수령</label>
                     </div>
                 </div>
                 <div class=" signup-div">
-                    <label class="signup-label">포장타임</label>
-                    <input class="size-11 normal" type="text" name="pack" id="pack" placeholder="ex) 냉장/종이포장">
+                    <label class="signup-label">포장타입</label>
+                    <input class="size-11 normal" type="text" name="pack" id="pack" placeholder="ex) 냉장/종이포장" value="<%=item.Pack%>">
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">가격</label>
-                    <input class="size-11 normal" type="number" id="price" name="price">
+                    <input class="size-11 normal" type="number" id="price" name="price" value="<%=item.Price%>">
                     <label>원</label>
                 </div>
             </form>

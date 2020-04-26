@@ -272,6 +272,9 @@
             <hr style="border: 1px solid #EE8232; margin-top: 0px;">
             <div id="detail" class="cat">
                 <img src="/public/uploads/<%=item.File2%>" class=" detail-img">
+                <% if(item.File3) { %>
+                    <img src="/public/uploads/<%=item.File3%>" class=" detail-img">
+                <% } %>
             </div>
             <div id="review" class="cat" hidden>
                 <br>

@@ -84,12 +84,35 @@ exports.login = (id, pw, cat, callback) => {
     });
 }
 
-exports.createItem = (Owner, Name, Des, Addr, MDate, Price, File1, File2, File3, Cat, Unit, Delivery, Pack, callback) => {
-    var query = `insert into Item set Owner='${Owner}', Name='${Name}', Des='${Des}', Addr='${Addr}', MDate='${MDate}', 
+exports.createItem = (Owner, Name, Des, Addr, MDate, Price, File1, File2, File3, Cat, Unit, Delivery, Pack, pesticide, callback) => {
+    var query = `insert into Item set Owner='${Owner}', Name='${Name}', Des='${Des}', Addr='${Addr}', MDate='${MDate}', Pesticide=${pesticide}, 
     Price=${Price}, File1='${File1}', File2='${File2}', Cat=${Cat}, Unit='${Unit}', Delivery='${Delivery}', Pack='${Pack}' `;
     if (File3) {
         query += ` ,File3='${File3}'`;
     }
+    connection.query(query, (e0) => {
+        if (e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}
+
+exports.updateOgItem = (id,Owner, Name, Des, Addr, MDate, Price, File1, File2, File3, Cat, Unit, Delivery, Pack, pesticide, callback) => {
+    var query = `update Item set Owner='${Owner}', Name='${Name}', Des='${Des}', Addr='${Addr}', MDate='${MDate}', Pesticide=${pesticide}, 
+    Price=${Price}, Cat=${Cat}, Unit='${Unit}', Delivery='${Delivery}', Pack='${Pack}' `;
+    if(File1) {
+        query+=` , File1='${File1}'`;
+    }
+    if(File2) {
+        query+=` , File2='${File2}'`;
+    }
+    if (File3) {
+        query += ` ,File3='${File3}'`;
+    }
+    query+=` where ID=${id}`;
     connection.query(query, (e0) => {
         if (e0) {
             console.error(e0);
@@ -805,5 +828,96 @@ exports.createAskReceive=(id, contents, callback)=>{
                 }
             });
         }
+    });
+}
+
+exports.addVisiter=(date, ip)=>{
+    const query=`insert into Visit set Date='${date}', IP='${ip}'`;
+    connection.query(query, (e0)=>{
+    });
+}
+
+exports.getVisister=(date, callback)=>{
+    const query=`select count(IP) cnt from Visit where Date='${date}'`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(0);
+        } else {
+            callback(rs[0].cnt);
+        }
+    });
+}
+exports.getMonthVisiter=(month, callback)=>{
+    const query=`select count(IP) cnt from Visit where date_format(Date, '%Y-%m')='${month}'`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(0);
+        } else {
+            callback(rs[0].cnt);
+        }
+    });
+}
+
+exports.getOrderStatus=(date, callback)=>{
+    const query1=`select count(ID) cnt from Orders where Status=1 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
+    const query2=`select count(ID) cnt from Orders where Status=2 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
+    const query3=`select count(ID) cnt from Orders where Status=3 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
+    const query4=`select count(ID) cnt from Orders where Status=4 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
+    var result={
+        rs1:0,
+        rs2:0,
+        rs3:0,
+        rs4:0
+    };
+    connection.query(query1,(e1, rs1)=>{
+        if(e1) {
+            console.error(e1);
+            callback(result);
+        } else {
+            result.rs1=rs1[0].cnt;
+            connection.query(query2, (e2, rs2)=>{
+                if(e2) {
+                    console.error(e2);
+                    callback(result);
+                } else {
+                    result.rs2=rs2[0].cnt;
+                    connection.query(query3, (e3, rs3)=>{
+                        if(e3) {
+                            console.error(e3);
+                            callback(result);
+                        } else {
+                            result.rs3=rs3[0].cnt;
+                            connection.query(query4, (e4, rs4)=>{
+                                if(e4) {
+                                    console.error(e4);
+                                    callback(result);
+                                } else {
+                                    result.rs4=rs4[0].cnt;
+                                    callback(result);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
+exports.getOrderByStatus=(sts, callback)=>{
+    const query=`select II.Name ItemName, OO.* from Item II join 
+    (select M.Name MemberName, M.MyAddr, O.* from Members M join 
+    (select ItemID, MemberID, date_format(PayTime, '%Y-%m-%d') Date, Qty, Price 
+    from Orders where Status=${sts}) O
+    on M.ID=O.MemberID) OO on II.ID=OO.ItemID`;
+    connection.query(query, (e0, rs)=>{
+       if(e0){
+           console.error(e0);
+           callback(null);
+       }  else {
+           callback(rs);
+       }
     });
 }

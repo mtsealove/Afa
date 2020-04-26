@@ -9,7 +9,14 @@
             $('#register-btn').click(function () {
                 location.href = '/Maker/Item/Register';
             });
+            setItemClick();
         });
+        function setItemClick() {
+            $('.item').click(function () {
+                const id = $(this).data('id');
+                location.href = `/Item/${id}`;
+            });
+        }
     </script>
 </head>
 
@@ -20,7 +27,7 @@
         <p class="title">판매중인 내 상품</p>
         <div class="grid-4">
             <% for(var i=0; i<items.length; i++) { %>
-            <div class="item">
+            <div class="item" data-id="<%=items[i].ID%>">
                 <div class="my-item-img-container">
                     <img src="/public/uploads/<%=items[i].File1%>" class="my-item-img">
                 </div>

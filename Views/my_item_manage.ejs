@@ -8,6 +8,7 @@
         $(function() {
             setRemoveBtn();
             setEdit();
+            setReRegister();
         });
         
         function setRemoveBtn() {
@@ -73,6 +74,18 @@
                 }
             }); 
         }
+        function setReRegister() {
+            $('#reregister-btn').click(function(){
+                const checked=$(`input[name='remove']:checked`);
+                if(checked.length!=1) {
+                    alert('하나의 상품을 선택해주세요.');
+                    return;
+                } else {
+                    const id=checked.data('id');
+                    location.href=`/Maker/Item/Register?item=${id}`;
+                }
+            });
+        }
     </script>
 </head>
 
@@ -127,11 +140,11 @@
                             <label class=" ">가격</label>
                             <div class="hidden-br"></div>
                             <label class="price-cnt " data-id="<%=items[i].ID%>"><%=items[i].Price.toLocaleString()%>원</label>
-                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="price" hidden value="<%=items[i].Price%>">
+                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="price" hidden value="<%=items[i].Price%>" type="number">
                             <div class="hidden-br"></div>
                             <label class="">재고</label>
                             <div class="hidden-br"></div>
-                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="cnt" hidden value="<%=items[i].Qty%>">
+                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="cnt" hidden value="<%=items[i].Qty%>" type="number">
                             <label class="price-cnt " data-id="<%=items[i].ID%>"><%=items[i].Qty.toLocaleString()%>개</label>
                             <div class="hidden-br"></div>
                             <div style="grid-column: 1/2 span; display: flex; flex-direction: row; justify-content:center;align-items: center;">
@@ -147,9 +160,9 @@
                         <div class="price-cnt">
                             <label class=" ">가격</label>
                             <label class="price-cnt " data-id="<%=items[i].ID%>"><%=items[i].Price.toLocaleString()%>원</label>
-                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="price" hidden value="<%=items[i].Price%>">
+                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="price" hidden value="<%=items[i].Price%>" type="number">
                             <label class="">재고</label>
-                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="cnt" hidden value="<%=items[i].Qty%>">
+                            <input class="price-cnt size-12" data-id="<%=items[i].ID%>" data-cat="cnt" hidden value="<%=items[i].Qty%>" type="number">
                             <label class="price-cnt " data-id="<%=items[i].ID%>"><%=items[i].Qty.toLocaleString()%>개</label>
                         </div>
                         <div style="grid-column: 1/2 span; display: flex; flex-direction: row; justify-content:center;align-items: center;">
@@ -165,7 +178,7 @@
         <br><br>
         <div class="horizontal bottom-div" >
             <button type="button" class=" btn-trd" id="remove-btn">선택 삭제</button>
-            <button type="button" class=" btn-sec" style="margin-left: 20px;">상품 재등록</button>
+            <button type="button" class=" btn-sec" style="margin-left: 20px;" id="reregister-btn">상품 재등록</button>
             <button type="button" class="btn-main" style="margin-left: 20px;" onclick="location.href='/Maker/Order'">주문확인</button>
         </div>
         <br><br>
