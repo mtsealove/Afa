@@ -119,7 +119,7 @@ app.get('/LocalMarket', (req, res)=>{
 app.get('/All', (req, res)=>{
     const user=getUser(req);
     var word=req.query.word;
-    sql.getAllItems(user.loc,null, null, word,(items)=>{
+    sql.getAllItems(user.loc, null, null, word,(items)=>{
         res.render('all', {user: user, items:items, word:word});
     });
 })
@@ -657,7 +657,7 @@ app.get('/Manager', (req, res)=>{
         sql.getMakerList((maker)=>{
             sql.getConsumerList((consumer)=>{
                 sql.getEvents((events)=>{
-                    sql.getAllItems(null, null, null, (item)=>{
+                    sql.getAllItems('',null, null, null, (item)=>{
                         res.render('manager', {user:user, maker:maker, consumer:consumer, events:events, items:item});
                     });
                 });
