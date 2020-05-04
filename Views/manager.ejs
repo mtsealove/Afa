@@ -14,6 +14,7 @@
             getAsks();
             setOrder();
             setOrderByStatus();
+            setSeason();
         });
         function setTabs() {
             $('.my-tab').click(function () {
@@ -61,7 +62,7 @@
             $('.event-file').change(function () {
                 const event = $(this).data('event');
                 const form = $(`#event-form${event}`)[0];
-            
+
                 var formData = new FormData(form);
                 console.log(form);
                 console.log(formData);
@@ -87,59 +88,59 @@
         }
 
         function setStatsticsDate() {
-            const inputDate=$('#statstics-date');
-            const inputMonth=$('#statstics-month');
-            
-            inputDate.change(function() {
-                const date=$(this).val();
+            const inputDate = $('#statstics-date');
+            const inputMonth = $('#statstics-month');
+
+            inputDate.change(function () {
+                const date = $(this).val();
                 $.get(`/ajax/Manage/Get/Stastics/Date?date=${date}`,
-                function(data){
-                    $('#s-date').html(
-                        `<td style="width: 16.6%;">${data.order.toLocaleString()}</td>
+                    function (data) {
+                        $('#s-date').html(
+                            `<td style="width: 16.6%;">${data.order.toLocaleString()}</td>
                           <td style="width: 16.6%;">${data.order.toLocaleString()}</td>
                         <td style="width: 16.6%;">${data.cancel.toLocaleString()}</td>
-                        <td style="width: 16.6%;">${data.price?data.price.toLocaleString():0}</td>
+                        <td style="width: 16.6%;">${data.price ? data.price.toLocaleString() : 0}</td>
                         <td style="width: 16.6%;">${data.Visit.toLocaleString()}</td>
                         <td style="width: 16.6%;">${data.signUp.toLocaleString()}</td>`
-                    );
-                });
+                        );
+                    });
             });
-            inputMonth.change(function() {
-                const month=$(this).val();
+            inputMonth.change(function () {
+                const month = $(this).val();
                 $.get(`/ajax/Manage/Get/Stastics/Month?month=${month}`,
-                function(data){
-                    $('#s-month').html(
-                        `<td style="width: 16.6%;">${data.order.toLocaleString()}</td>
+                    function (data) {
+                        $('#s-month').html(
+                            `<td style="width: 16.6%;">${data.order.toLocaleString()}</td>
                           <td style="width: 16.6%;">${data.order.toLocaleString()}</td>
                         <td style="width: 16.6%;">${data.cancel.toLocaleString()}</td>
-                        <td style="width: 16.6%;">${data.price?data.price.toLocaleString():0}</td>
+                        <td style="width: 16.6%;">${data.price ? data.price.toLocaleString() : 0}</td>
                         <td style="width: 16.6%;">${data.Visit.toLocaleString()}</td>
                         <td style="width: 16.6%;">${data.signUp.toLocaleString()}</td>`
-                    );
-                });
-            }); 
-            const date=new Date();
-            var dateStr=date.getFullYear()+'-';
-            if(date.getMonth()<9) {
-                dateStr+='0';
+                        );
+                    });
+            });
+            const date = new Date();
+            var dateStr = date.getFullYear() + '-';
+            if (date.getMonth() < 9) {
+                dateStr += '0';
             }
-            dateStr+=(date.getMonth()+1);
+            dateStr += (date.getMonth() + 1);
             inputMonth.attr('max', dateStr);
             inputMonth.val(dateStr).trigger('change');
-            dateStr+='-';
-            if(date.getDate()<10) {
-                dateStr+='0';
+            dateStr += '-';
+            if (date.getDate() < 10) {
+                dateStr += '0';
             }
-            dateStr+=date.getDate();
+            dateStr += date.getDate();
             inputDate.attr('max', dateStr);
             inputDate.val(dateStr).trigger('change');
         }
 
         function getAsks() {
-            var html='';
-            $.get('/ajax/Manage/Get/Ask', (data)=>{
-                for(item of data) {
-                    html+=`
+            var html = '';
+            $.get('/ajax/Manage/Get/Ask', (data) => {
+                for (item of data) {
+                    html += `
                     <tr style='text-align:center; height:40px' class='point ask-tr' data-id='${item.ID}'>
                         <td style='width:10%'>${item.ID}</td>
                         <td style='width:30%'>${item.Title}</td>
@@ -149,23 +150,23 @@
                     </tr>`
                 }
                 $('#ask-body').html(html);
-                $('.ask-tr').click(function() {
-                    const id=$(this).data('id');
-                    location.href=`/Manager/Ask/Recevie?id=${id}`;
+                $('.ask-tr').click(function () {
+                    const id = $(this).data('id');
+                    location.href = `/Manager/Ask/Recevie?id=${id}`;
                 });
             });
         }
 
         function setOrder() {
-            const select_order=$('#order-date');
-            const table=$('#order-status-table');
-            var html='';
-            select_order.change(function() {
-                const date=$(this).val();
-                $.get(`/ajax/Manage/OrderStatus?date=${date}`,(data)=>{
-                    html=`
+            const select_order = $('#order-date');
+            const table = $('#order-status-table');
+            var html = '';
+            select_order.change(function () {
+                const date = $(this).val();
+                $.get(`/ajax/Manage/OrderStatus?date=${date}`, (data) => {
+                    html = `
                     <tr style='text-align:center; height:40px'>
-                        <td style='width:20%'>${data.rs1+data.rs2+data.rs3+data.rs4}</td>
+                        <td style='width:20%'>${data.rs1 + data.rs2 + data.rs3 + data.rs4}</td>
                         <td style='width:20%'>${data.rs1}</td>
                         <td style='width:20%'>${data.rs2}</td>
                         <td style='width:20%'>${data.rs3}</td>
@@ -174,30 +175,30 @@
                     table.html(html);
                 });
             });
-  
-            const date=new Date();
-            var dateStr=date.getFullYear()+'-';
-            if(date.getMonth()<9) {
-                dateStr+='0';
+
+            const date = new Date();
+            var dateStr = date.getFullYear() + '-';
+            if (date.getMonth() < 9) {
+                dateStr += '0';
             }
-            dateStr+=(date.getMonth()+1)+'-'; 
-            if(date.getDate()<10) {
-                dateStr+='0';
+            dateStr += (date.getMonth() + 1) + '-';
+            if (date.getDate() < 10) {
+                dateStr += '0';
             }
-            dateStr+=date.getDate();
+            dateStr += date.getDate();
             select_order.val(dateStr).trigger('change');
         }
 
         function setOrderByStatus() {
-            const select=$('#order-by-status');
-            const table=$('#order-by-status-body');
-            
-            select.change(function() {
-                const sts=$(this).val();
-                $.get(`/ajax/Manage/OrderByStatus?status=${sts}`, (data)=>{
-                    var html='';
-                    for(item of data) {
-                        html+=`
+            const select = $('#order-by-status');
+            const table = $('#order-by-status-body');
+
+            select.change(function () {
+                const sts = $(this).val();
+                $.get(`/ajax/Manage/OrderByStatus?status=${sts}`, (data) => {
+                    var html = '';
+                    for (item of data) {
+                        html += `
                         <tr style='height:40px; text-align:center'>
                             <td style='width:15%'>${item.ItemName}</td>
                             <td style='width:10%'>${item.Qty}</td>
@@ -211,6 +212,27 @@
                 });
             });
             select.val(1).trigger('change');
+        }
+
+        function setSeason() {
+            $('#season-btn').click(function () {
+                if (confirm('제철 상품을 수정하시겠습니까?')) {
+                    const items = $('.season-check:checked');
+                    var ids = Array();
+                    for (var item of items) {
+                        const id = $(item).data('id');
+                        ids.push(id);
+                    }
+                    console.log(ids);
+                    $.post('/ajax/Manage/Season', { ids: ids }, function (data) {
+                        if (data.Result) {
+                            alert('제철 상품이 수정되었습니다.');
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            });
         }
     </script>
 </head>
@@ -239,9 +261,12 @@
                 <div class="my-tab point" data-div="div-ask">
                     <p>문의 관리</p>
                 </div>
+                <div class="my-tab point" data-div="div-season">
+                    <p>제철 상품 관리</p>
+                </div>
             </div>
             <!-- contents -->
-            <div class="my-tab-info" style="min-height: 400px;">
+            <div class="my-tab-info" style="min-height: 500px;">
                 <!-- 통계 -->
                 <div id="div-statistics" class="manager-div">
                     <!-- 회원 -->
@@ -346,8 +371,10 @@
                                 <td style="width:10%"><%=maker[i].Phone%></td>
                                 <td style="width:15%"><%=maker[i].MakeAddr%></td>
                                 <td style="width:10%"><%=maker[i].SignUp%></td>
-                                <td style="width:10%"><%=maker[i].MonthPrice.toLocaleString()%></td>
-                                <td style="width:10%"><%=maker[i].TotalPrice.toLocaleString()%></td>
+                                <td style="width:10%"><%=maker[i].MonthPrice?maker[i].MonthPrice.toLocaleString():0%>
+                                </td>
+                                <td style="width:10%"><%=maker[i].TotalPrice?maker[i].TotalPrice.toLocaleString():0%>
+                                </td>
                                 <td style="width:15%"><%=maker[i].Bank%><br><%=maker[i].BankAddr%></td>
                             </tr>
                             <% } %>
@@ -409,7 +436,7 @@
                             <th class="th">배송 완료</th>
                         </thead>
                         <tbody id="order-status-table">
-                            
+
                         </tbody>
                     </table>
                     <div class=" horizontal">
@@ -438,36 +465,48 @@
                 <!-- 디자인 관리 -->
                 <div class="manager-div" id="div-design">
                     <div class="horizontal between" style="width: 100%;">
-                        <img class="banner-manage" src="/public/<%=events[0].Path?'uploads/'+events[0].Path:'images/no_image.png'%>" id="event-img1">
+                        <img class="banner-manage"
+                            src="/public/<%=events[0].Path?'uploads/'+events[0].Path:'images/no_image.png'%>"
+                            id="event-img1">
                         <form enctype="multipart/form-data" id="event-form1">
-                            <input type="file" hidden id="event1" class="event-file" data-event="1" accept="image/*" name="event_file">
+                            <input type="file" hidden id="event1" class="event-file" data-event="1" accept="image/*"
+                                name="event_file">
                             <input hidden value="1" name="priority">
                         </form>
                         <button type="button" class="btn-main img-btn" data-event="event1">변경</button>
                     </div>
                     <br><br>
                     <div class="horizontal between" style="width: 100%;">
-                        <img class="banner-manage" src="/public/<%=events[1].Path?'uploads/'+events[1].Path:'images/no_image.png'%>" id="event-img2">
+                        <img class="banner-manage"
+                            src="/public/<%=events[1].Path?'uploads/'+events[1].Path:'images/no_image.png'%>"
+                            id="event-img2">
                         <form enctype="multipart/form-data" id="event-form2">
-                            <input type="file" hidden id="event2" class="event-file" data-event="2" accept="image/*" name="event_file">
+                            <input type="file" hidden id="event2" class="event-file" data-event="2" accept="image/*"
+                                name="event_file">
                             <input hidden value="2" name="priority">
                         </form>
                         <button type="button" class="btn-main img-btn" data-event="event2">변경</button>
                     </div>
                     <br><br>
                     <div class="horizontal between" style="width: 100%;">
-                        <img class="banner-manage" src="/public/<%=events[2].Path?'uploads/'+events[2].Path:'images/no_image.png'%>" id="event-img3">
+                        <img class="banner-manage"
+                            src="/public/<%=events[2].Path?'uploads/'+events[2].Path:'images/no_image.png'%>"
+                            id="event-img3">
                         <form enctype="multipart/form-data" id="event-form3">
-                            <input type="file" hidden id="event3" class="event-file" data-event="3" accept="image/*" name="event_file">
+                            <input type="file" hidden id="event3" class="event-file" data-event="3" accept="image/*"
+                                name="event_file">
                             <input hidden value="3" name="priority">
                         </form>
                         <button type="button" class="btn-main img-btn" data-event="event3">변경</button>
                     </div>
                     <br><br>
                     <div class="horizontal between" style="width: 100%;">
-                        <img class="banner-manage" src="/public/<%=events[3].Path?'uploads/'+events[3].Path:'images/no_image.png'%>" id="event-img4">
+                        <img class="banner-manage"
+                            src="/public/<%=events[3].Path?'uploads/'+events[3].Path:'images/no_image.png'%>"
+                            id="event-img4">
                         <form enctype="multipart/form-data" id="event-form4">
-                            <input type="file" hidden id="event4" class="event-file" data-event="4" accept="image/*" name="event_file">
+                            <input type="file" hidden id="event4" class="event-file" data-event="4" accept="image/*"
+                                name="event_file">
                             <input hidden value="4" name="priority">
                         </form>
                         <button type="button" class="btn-main img-btn" data-event="event4">변경</button>
@@ -489,6 +528,65 @@
 
                         </tbody>
                     </table>
+                </div>
+                <!-- 제철 상품 관리 -->
+                <div class="manager-div" id="div-season">
+                    <p class="size-15">제철 상품 관리</p>
+                    <table style="width: 100%;">
+                        <thead class="thead">
+                            <th class="th">선택</th>
+                            <th class="th">상품 이미지</th>
+                            <th class="th">상품정보</th>
+                            <th class="th">가격/재고</th>
+                        </thead>
+                        <tbody>
+                            <% for(var i=0; i<items.length; i++) { %>
+                            <tr>
+                                <td class="check" style="width: 10%;">
+                                    <div class="check ">
+                                        <input class="season-check" data-id="<%=items[i].ID%>" type="checkbox"
+                                            <%=items[i].Season?'checked':''%>>
+                                    </div>
+                                </td>
+                                <td style="width: 15%;">
+                                    <div class=" small-img-container">
+                                        <img class=" small-img" src="/public/uploads/<%=items[i].File1%>">
+                                    </div>
+                                </td>
+                                <td style="width: 60%;">
+                                    <div class="info-div">
+                                        <label class="gray">등록날짜</label>
+                                        <% var date=new Date(items[i].MDate);
+                                                    var dateStr=date.getFullYear()+'-'; 
+                                                    if(date.getMonth()<9){
+                                                        dateStr+='0';
+                                                    }
+                                                    dateStr+=(date.getMonth()+1)+'-';
+                                                    if(date.getDate()<10) {
+                                                        dateStr+='0';
+                                                    }
+                                                    dateStr+=date.getDate(); %>
+                                        <label class="gray"><%=dateStr%></label>
+                                        <label class="gray">등록번호</label>
+                                        <label class="gray"><%=items[i].ID%></label>
+                                        <label class="gray">상품명</label>
+                                        <label class="gray"><%=items[i].Name%></label>
+                                    </div>
+                                </td>
+                                <td style="text-align: center;">
+                                    <label class="gray"><%=items[i].Price.toLocaleString()%>원</label><br>
+                                    <label class="gray">재고: <%=items[i].Qty.toLocaleString()%></label>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class=" horizontal between">
+                        <label></label>
+                        <button class=" btn-main" type="button" id="season-btn">제철 상품 수정</button>
+                    </div>
+
                 </div>
             </div>
         </div>

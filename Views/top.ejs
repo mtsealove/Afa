@@ -112,6 +112,9 @@
     $('#loc-select').change(function() {
         const loc=$(this).val();
         $.get(`/ajax/Session?loc=${loc}`, (data)=>{
+          if(data.Result) {
+            location.reload();
+          }
         });
     });
   }
@@ -151,16 +154,16 @@
   <div class=" horizontal">
     <img src="/public/images/menu.png" width="24" height="24">
     <select class="nav-item trasparent size-12" style="margin-left: 10px;" id="loc-select">
-      <option value="">생산지역 모두보기</option>
-      <option value="천안">천안</option>
-      <option value="아산">아산</option>
+      <option value="" >생산지역 모두보기</option>
+      <option value="천안" <%=user.loc=='천안'?'selected':''%>>천안</option>
+      <option value="아산" <%=user.loc=='아산'?'selected':''%>>아산</option>
     </select>
   </div>
   
   <div class="horizontal between" id="big">
     <a href="/All"><span class="nav-item" >전체 상품</span></a>
     <a href="/Events"><span class="nav-item" >이벤트</span></a>
-    <a href="/LocalMarket"><span class="nav-item">로컬마켓이란</span></a>
+    <a href="/LocalMarket"><span class="nav-item">소개</span></a>
   </div>
 
   <div class=" horizontal between">

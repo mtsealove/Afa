@@ -192,7 +192,7 @@
                     <select name="cat" class=" size-12 signup-input normal">
 
                         <% for(var i=0; i<cat.length; i++) { %>
-                        <option value="<%=cat[i].ID%>" <%=item.Cat==cat[i].ID?'checked':''%>><%=cat[i].Name%></option>
+                        <option value="<%=cat[i].ID%>" <%=item&&item.Cat==cat[i].ID?'checked':''%>><%=cat[i].Name%></option>
                         <% } %>
                     </select>
                 </div>
@@ -205,7 +205,7 @@
                         </div>
                         <div style="margin-left: 10px;">
                             <input type="radio" id="pesticide-y" name="pesticide" value="true"
-                                <%=item.Pesticide?'checked':''%>>
+                                <%=item&&item.Pesticide?'checked':''%>>
                             <label for="pesticide-y">사용</label>
                         </div>
                     </div>
@@ -213,7 +213,7 @@
                 <div class=" signup-div">
                     <label class="signup-label">상품 소개</label>
                     <input class="size-11 normal" type="text" placeholder="간단한 상품 소개를 입력해주세요." name="des" id="des"
-                        value="<%=item.Des?item.Des:''%>">
+                        value="<%=item&&item.Des?item.Des:''%>">
                 </div>
 
                 <div class=" horizontal between signup-div">
@@ -228,17 +228,20 @@
                     <label></label>
                     <label></label>
                     <input class=" input-line" id="make-addr2" placeholder="상세 주소를 입력해주세요.">
-                    <input name="make_addr" id="make-addr3" value="<%=item.Addr%>" hidden>
+                    <input name="make_addr" id="make-addr3" value="<%=item?item.Addr:''%>" hidden>
                     <label></label>
                     <% if(item) { %>
                         <label></label>
-                        <label class=" normal" id="og-addr"><%=item.Addr%></label>
+                        <label class=" normal" id="og-addr"><%=itme?item.Addr:''%></label>
                     <% } %>
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">생산 날짜</label>
+                    <% if(item) { %>
                     <script>
                         $(function () {
+                            
+
                             var date = new Date('<%=item.MDate%>');
                             var dateStr = date.getFullYear() + '-';
                             if (date.getMonth() < 9) {
@@ -252,29 +255,30 @@
                             $('#date').val(dateStr);
                         });
                     </script>
+                    <% } %>
                     <input class="size-11 normal" type="date" name="date" id="date">
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">판매단위</label>
-                    <input class="size-11 normal" type="text" name="unit" id="unit" placeholder="ex) 1Kg" value="<%=item.Unit%>">
+                    <input class="size-11 normal" type="text" name="unit" id="unit" placeholder="ex) 1Kg" value="<%=item?item.Unit:''%>">
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">배송 구분</label>
                     <div class="horizontal">
                         
-                        <input name="delivery" type="checkbox" value="택배배송" id="delivery-post" <%=item.Delivery.indexOf('택배배송')!=-1?'checked':''%>>
+                        <input name="delivery" type="checkbox" value="택배배송" id="delivery-post" <%=item&&item.Delivery.indexOf('택배배송')!=-1?'checked':''%>>
                         <label for="delivery-post" class="size-11 gray">택배배송</label>
-                        <input name="delivery" type="checkbox" value="방문수령" id="delivery-take" <%=item.Delivery.indexOf('방문수령')!=-1?'checked':''%>>
+                        <input name="delivery" type="checkbox" value="방문수령" id="delivery-take" <%=item&&item.Delivery.indexOf('방문수령')!=-1?'checked':''%>>
                         <label for="delivery-take" class="size-11 gray">방문수령</label>
                     </div>
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">포장타입</label>
-                    <input class="size-11 normal" type="text" name="pack" id="pack" placeholder="ex) 냉장/종이포장" value="<%=item.Pack%>">
+                    <input class="size-11 normal" type="text" name="pack" id="pack" placeholder="ex) 냉장/종이포장" value="<%=item?item.Pack:''%>">
                 </div>
                 <div class=" signup-div">
                     <label class="signup-label">가격</label>
-                    <input class="size-11 normal" type="number" id="price" name="price" value="<%=item.Price%>">
+                    <input class="size-11 normal" type="number" id="price" name="price" value="<%=item?item.Price:''%>">
                     <label>원</label>
                 </div>
             </form>

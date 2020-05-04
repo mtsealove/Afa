@@ -48,6 +48,19 @@
         <img src="/public/uploads/<%=events[0].Path%>" style="width: 100vw;">
         <div class="center">
             <br>
+            <h3 class="h gray">이달의 제철 과일 및 채소</h3>
+            <div class="grid-4">
+                <% for(var i=0; i<season.length; i++) { %>
+                <div class="item" data-id="<%=season[i].ID%>">
+                    <div class=" my-item-img-container">
+                        <img src="/public/uploads/<%=season[i].File1%>" class="my-item-img">
+                    </div>
+                    <label class=" gray size-12"><%=season[i].Name%></label>
+                    <label class="size-14" style="margin-top: 10px;"><%=season[i].Price.toLocaleString()%>원</label>
+                </div>
+                <% } %>
+            </div><br>
+
             <h3 class="h gray">신상품 ></h3>
             <div class="grid-4">
                 <% for(var i=0; i<news.length; i++) { %>

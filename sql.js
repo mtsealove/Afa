@@ -194,8 +194,8 @@ exports.getCat = (callback) => {
     });
 }
 
-exports.getNewitems = (callback) => {
-    const query = `select * from Item order by ID desc limit 4`;
+exports.getNewitems = (addr, callback) => {
+    const query = `select * from Item where Addr like '%${addr}%' order by ID desc limit 4`;
     connection.query(query, (e0, rs) => {
         if (e0) {
             console.error(e0);
@@ -206,10 +206,10 @@ exports.getNewitems = (callback) => {
     });
 }
 
-exports.getAllItems = (order, asc, word, callback) => {
-    var query = `select * from Item `;
+exports.getAllItems = (addr, order, asc, word, callback) => {
+    var query = `select * from Item where Addr like '%${addr}%' `;
     if (word) {
-        query += ` where Name like '%${word}%' `;
+        query += ` and Name like '%${word}%' `;
     }
     if (order) {
         query += ` order by ${order} ${asc}`;
@@ -329,10 +329,10 @@ exports.updateQuestionClick = (id, callback) => {
     });
 }
 
-exports.getBestItems = (cat, callback) => {
-    var query = `select * from Item `;
+exports.getBestItems = (addr,cat, callback) => {
+    var query = `select * from Item where Addr like '%${addr}%'`;
     if (cat != -1) {
-        query += ` where Cat=${cat} `;
+        query += ` and Cat=${cat} `;
     }
     query += ` order by Sale desc limit 4`;
     connection.query(query, (e0, rs) => {
@@ -919,5 +919,45 @@ exports.getOrderByStatus=(sts, callback)=>{
        }  else {
            callback(rs);
        }
+    });
+}
+
+exports.updateSeason=(ids=Array(), callback)=>{
+    var idStr='';
+    for(var i=0; i<ids.length; i++) {
+        idStr+=ids[i];
+        if(i!=ids.length-1) {
+            idStr+=',';
+        }
+    }
+    const trueQuery=`update Item set Season=true where ID in (${idStr})`;
+    const falseQuery=`update Item set Season=false where ID not in (${idStr})`;
+
+    connection.query(trueQuery, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            connection.query(falseQuery, (e1)=>{
+                if(e1) {
+                    console.error(e1);
+                    callback(false);
+                } else {
+                    callback(true);
+                }
+            });
+        }
+    });
+}
+
+exports.getSeasonItem=(addr,callback)=>{
+    const query=`select * from Item where Addr like '%${addr}%' and Season=true order by ID desc limit 4`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
     });
 }

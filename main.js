@@ -37,9 +37,11 @@ app.use(function(req, res, next){
 // index page
 app.get('/', (req, res) => {
     const user=getUser(req); 
-    sql.getNewitems((news)=>{
+    sql.getNewitems(user.loc, (news)=>{
         sql.getEvents((events)=>{
-            res.render('index', {user:user, news:news, events:events});
+            sql.getSeasonItem(user.loc, (season)=>{
+                res.render('index', {user:user, news:news, events:events, season:season});
+            });
         });
     });
 });
@@ -47,7 +49,6 @@ app.get('/', (req, res) => {
 app.get('/ajax/Session', (req, res)=>{
     const loc=req.query.loc;
     req.session.loc=loc;
-    console.log(req.session.loc);
     res.json(ok);
 });
 
@@ -80,6 +81,15 @@ app.get('/Ask', (req, res)=>{
     }
 });
 
+app.get('/Privacy', (req, res)=>{
+    const user=getUser(req);
+    res.render('privacy', {user:user});
+});
+app.get('/Rule', (req, res)=>{
+    const user=getUser(req);
+    res.render('use_rule', {user:user});
+});
+
 app.get('/Ask/Detail/:id', (req, res)=>{
     const user=getUser(req);
     const id=req.param('id');
@@ -109,7 +119,7 @@ app.get('/LocalMarket', (req, res)=>{
 app.get('/All', (req, res)=>{
     const user=getUser(req);
     var word=req.query.word;
-    sql.getAllItems(null, null, word,(items)=>{
+    sql.getAllItems(user.loc,null, null, word,(items)=>{
         res.render('all', {user: user, items:items, word:word});
     });
 })
@@ -626,7 +636,8 @@ app.post('/ajax/Update/Question', (req, res)=>{
 
 app.get('/ajax/Get/Best', (req, res)=>{
     const cat=req.query.cat;
-    sql.getBestItems(cat, (best)=>{
+    const user=getUser(req);
+    sql.getBestItems(user.loc, cat, (best)=>{
         res.json(best);
     });
 });
@@ -646,7 +657,9 @@ app.get('/Manager', (req, res)=>{
         sql.getMakerList((maker)=>{
             sql.getConsumerList((consumer)=>{
                 sql.getEvents((events)=>{
-                    res.render('manager', {user:user, maker:maker, consumer:consumer, events:events});
+                    sql.getAllItems(null, null, null, (item)=>{
+                        res.render('manager', {user:user, maker:maker, consumer:consumer, events:events, items:item});
+                    });
                 });
             });
         });
@@ -734,6 +747,18 @@ app.get('/ajax/Manage/OrderByStatus', (req, res)=>{
     });
 });
 
+app.post('/ajax/Manage/Season', (req, res)=>{
+    console.log(req.body);
+    const ids=req.body['ids'];
+    sql.updateSeason(ids, (rs)=>{
+        if(rs) {
+            res.json(ok);
+        } else {
+            res.json(not);
+        }
+    })
+});
+
 app.listen(80, () => {
     console.log('afa runnings');
 });
@@ -750,11 +775,13 @@ function getUser(req) {
     const id = req.session.userID;
     const name = req.session.userName;
     const cat = req.session.userCat;
+    const loc=req.session.loc?req.session.loc:'';
     return {
         userID: id,
         userName: name,
-        userCat: cat
-    }
+        userCat: cat,
+        loc:loc
+    };
 }
 
 function getDate() {
