@@ -329,12 +329,15 @@ exports.updateQuestionClick = (id, callback) => {
     });
 }
 
-exports.getBestItems = (addr,cat, callback) => {
+exports.getBestItems = (addr,cat, limit, callback) => {
     var query = `select * from Item where Addr like '%${addr}%'`;
     if (cat != -1) {
         query += ` and Cat=${cat} `;
     }
-    query += ` order by Sale desc limit 4`;
+    query += ` order by Sale desc `;
+    if(limit) {
+        query+=` limit ${limit}`;
+    }
     connection.query(query, (e0, rs) => {
         if (e0) {
             console.error(e0);
@@ -545,10 +548,10 @@ exports.getMakerList = (callback) => {
     (select ID, Name, Gender, Phone, MakeAddr, date_format(SignUpdate, '%Y.%m.%d') SignUp, Bank, BankAddr 
     from Members where Cat=1) MMM left outer join
      (select Owner, sum(Price) MonthPrice from 
-    (select I. Owner, O.Price from Orders O join
+    (select I. Owner, O.Price from Orders O left outer join
     (select ID, Owner from Item) I on O.ItemID=I.ID 
     where date_format(O.PayTime, '%Y-%m')=date_format(now(), '%Y-%m')) OO group by Owner) OOO 
-    on MMM.ID=OOO.Owner) MMMM join 
+    on MMM.ID=OOO.Owner) MMMM  left outer join 
     (select Owner, sum(Price) TotalPrice from 
     (select I. Owner, O.Price from Orders O join
     (select ID, Owner from Item) I on O.ItemID=I.ID ) OO group by Owner) OOOO
@@ -950,8 +953,48 @@ exports.updateSeason=(ids=Array(), callback)=>{
     });
 }
 
+exports.updatePick=(ids=Array(), callback)=>{
+    var idStr='';
+    for(var i=0; i<ids.length; i++) {
+        idStr+=ids[i];
+        if(i!=ids.length-1) {
+            idStr+=',';
+        }
+    }
+    const trueQuery=`update Item set MdPick=true where ID in (${idStr})`;
+    const falseQuery=`update Item set MdPick=false where ID not in (${idStr})`;
+
+    connection.query(trueQuery, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            connection.query(falseQuery, (e1)=>{
+                if(e1) {
+                    console.error(e1);
+                    callback(false);
+                } else {
+                    callback(true);
+                }
+            });
+        }
+    });
+}
+
 exports.getSeasonItem=(addr,callback)=>{
     const query=`select * from Item where Addr like '%${addr}%' and Season=true order by ID desc limit 4`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getPickItem=(addr,callback)=>{
+    const query=`select * from Item where Addr like '%${addr}%' and MdPick=true order by ID desc limit 4`;
     connection.query(query, (e0, rs)=>{
         if(e0) {
             console.error(e0);

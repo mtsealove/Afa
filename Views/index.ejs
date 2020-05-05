@@ -61,7 +61,8 @@
                 <% } %>
             </div><br>
 
-            <h3 class="h gray">신상품 ></h3>
+            <div class=" divide">
+            <h3 class="h gray"><a href="/All">신상품 &gt;</a></h3>
             <div class="grid-4">
                 <% for(var i=0; i<news.length; i++) { %>
                 <div class="item" data-id="<%=news[i].ID%>">
@@ -73,8 +74,9 @@
                 </div>
                 <% } %>
             </div>
+        </div>
             <br>
-            <h3 class=" h gray">싸투리마켓 <b>BEST</b> ></h3>
+            <h3 class=" h gray"><a href="/Best">싸투리마켓 <b>BEST</b> &gt;</a></h3>
 
             <div class=" horizontal">
                 <button class="btn-round btn-round-active" data-cat="-1">전체보기</button>
@@ -88,15 +90,16 @@
             </div>
             <br>
             <img src="/public/uploads/<%=events[1].Path%>" class="main-banner">
-            <h3 class=" h gray">MD’s Pick</h3>
+            <h3 class=" h gray"><a href="/Pick">MD’s Pick &gt;</a></h3>
+
             <div class="grid-4">
-                <% for(var i=0; i<news.length; i++) { %>
-                <div class="item" data-id="<%=news[i].ID%>">
+                <% for(var i=0; i<pick.length; i++) { %>
+                <div class="item" data-id="<%=pick[i].ID%>">
                     <div class=" my-item-img-container">
-                        <img src="/public/uploads/<%=news[i].File1%>" class="my-item-img">
+                        <img src="/public/uploads/<%=pick[i].File1%>" class="my-item-img">
                     </div>
-                    <label class=" gray size-12"><%=news[i].Name%></label>
-                    <label class="size-14" style="margin-top: 10px;"><%=news[i].Price.toLocaleString()%>원</label>
+                    <label class=" gray size-12"><%=pick[i].Name%></label>
+                    <label class="size-14" style="margin-top: 10px;"><%=pick[i].Price.toLocaleString()%>원</label>
                 </div>
                 <% } %>
             </div>

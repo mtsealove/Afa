@@ -40,7 +40,9 @@ app.get('/', (req, res) => {
     sql.getNewitems(user.loc, (news)=>{
         sql.getEvents((events)=>{
             sql.getSeasonItem(user.loc, (season)=>{
-                res.render('index', {user:user, news:news, events:events, season:season});
+                sql.getPickItem(user.loc, (pick)=>{
+                    res.render('index', {user:user, news:news, events:events, season:season, pick:pick});
+                });
             });
         });
     });
@@ -123,6 +125,20 @@ app.get('/All', (req, res)=>{
         res.render('all', {user: user, items:items, word:word});
     });
 })
+
+app.get('/Best', (req, res)=>{
+    const user=getUser(req);
+    sql.getBestItems(user.loc, -1, 16, (items)=>{
+        res.render('best', {user:user, items:items});
+    });
+});
+
+app.get('/Pick', (req, res)=>{
+    const user=getUser(req);
+    sql.getPickItem(user.loc, (items)=>{
+        res.render('pick', {user:user, items:items});
+    });
+});
 
 app.get('/Item/:ID', (req, res)=>{
     const ID=req.params.ID;
@@ -637,7 +653,7 @@ app.post('/ajax/Update/Question', (req, res)=>{
 app.get('/ajax/Get/Best', (req, res)=>{
     const cat=req.query.cat;
     const user=getUser(req);
-    sql.getBestItems(user.loc, cat, (best)=>{
+    sql.getBestItems(user.loc, cat, 4, (best)=>{
         res.json(best);
     });
 });
@@ -748,7 +764,6 @@ app.get('/ajax/Manage/OrderByStatus', (req, res)=>{
 });
 
 app.post('/ajax/Manage/Season', (req, res)=>{
-    console.log(req.body);
     const ids=req.body['ids'];
     sql.updateSeason(ids, (rs)=>{
         if(rs) {
@@ -756,7 +771,18 @@ app.post('/ajax/Manage/Season', (req, res)=>{
         } else {
             res.json(not);
         }
-    })
+    });
+});
+
+app.post('/ajax/Manage/Pick', (req, res)=>{
+    const ids=req.body['ids'];
+    sql.updatePick(ids, (rs)=>{
+        if(rs) {
+            res.json(ok);
+        } else {
+            res.json(not);
+        }
+    });
 });
 
 app.listen(80, () => {

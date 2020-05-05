@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>인기 상품</title>
+    <%- include('config') %>
+    <script>
+        $(function(){
+            setItemClick();
+        })
+        function setItemClick() {
+            $('.item').click(function () {
+                const id = $(this).data('id');
+                location.href = `/Item/${id}`;
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('recent') %>
+    <%- include('top') %>
+    
+    <section>
+        <div class="center">
+            <br>
+            <h3 class="h gray">인기 상품</h3>
+            <div class="grid-4">
+                <% for(var i=0; i<items.length; i++) { %>
+                    <div class="item" data-id="<%=items[i].ID%>">
+                        <div class=" my-item-img-container">
+                            <img src="/public/uploads/<%=items[i].File1%>" class="my-item-img">
+                        </div>
+                        <label class=" gray size-12"><%=items[i].Name%></label>
+                        <label class="size-14" style="margin-top: 10px;"><%=items[i].Price.toLocaleString()%>원</label>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
+    </section>
+    <br><br><br><br>
+    <%- include('footer') %>
+</body>
+
+</html>

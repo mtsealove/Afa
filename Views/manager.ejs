@@ -15,6 +15,7 @@
             setOrder();
             setOrderByStatus();
             setSeason();
+            setPick();
         });
         function setTabs() {
             $('.my-tab').click(function () {
@@ -234,6 +235,27 @@
                 }
             });
         }
+
+        function setPick() {
+            $('#pick-btn').click(function () {
+                if (confirm('추천 상품을 수정하시겠습니까?')) {
+                    const items = $('.pick-check:checked');
+                    var ids = Array();
+                    for (var item of items) {
+                        const id = $(item).data('id');
+                        ids.push(id);
+                    }
+                    console.log(ids);
+                    $.post('/ajax/Manage/Pick', { ids: ids }, function (data) {
+                        if (data.Result) {
+                            alert('추천 상품이 수정되었습니다.');
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            });
+        }
     </script>
 </head>
 
@@ -263,6 +285,9 @@
                 </div>
                 <div class="my-tab point" data-div="div-season">
                     <p>제철 상품 관리</p>
+                </div>
+                <div class="my-tab point" data-div="div-pick">
+                    <p>추천 상품 관리</p>
                 </div>
             </div>
             <!-- contents -->
@@ -587,6 +612,64 @@
                         <button class=" btn-main" type="button" id="season-btn">제철 상품 수정</button>
                     </div>
 
+                </div>
+                <!-- 추천 상품 관리 -->
+                <div class="manager-div" id="div-pick">
+                    <p class="size-15">추천 상품 관리</p>
+                    <table style="width: 100%;">
+                        <thead class="thead">
+                            <th class="th">선택</th>
+                            <th class="th">상품 이미지</th>
+                            <th class="th">상품정보</th>
+                            <th class="th">가격/재고</th>
+                        </thead>
+                        <tbody>
+                            <% for(var i=0; i<items.length; i++) { %>
+                            <tr>
+                                <td class="check" style="width: 10%;">
+                                    <div class="check ">
+                                        <input class="pick-check" data-id="<%=items[i].ID%>" type="checkbox"
+                                            <%=items[i].MdPick?'checked':''%>>
+                                    </div>
+                                </td>
+                                <td style="width: 15%;">
+                                    <div class=" small-img-container">
+                                        <img class=" small-img" src="/public/uploads/<%=items[i].File1%>">
+                                    </div>
+                                </td>
+                                <td style="width: 60%;">
+                                    <div class="info-div">
+                                        <label class="gray">등록날짜</label>
+                                        <% var date=new Date(items[i].MDate);
+                                                    var dateStr=date.getFullYear()+'-'; 
+                                                    if(date.getMonth()<9){
+                                                        dateStr+='0';
+                                                    }
+                                                    dateStr+=(date.getMonth()+1)+'-';
+                                                    if(date.getDate()<10) {
+                                                        dateStr+='0';
+                                                    }
+                                                    dateStr+=date.getDate(); %>
+                                        <label class="gray"><%=dateStr%></label>
+                                        <label class="gray">등록번호</label>
+                                        <label class="gray"><%=items[i].ID%></label>
+                                        <label class="gray">상품명</label>
+                                        <label class="gray"><%=items[i].Name%></label>
+                                    </div>
+                                </td>
+                                <td style="text-align: center;">
+                                    <label class="gray"><%=items[i].Price.toLocaleString()%>원</label><br>
+                                    <label class="gray">재고: <%=items[i].Qty.toLocaleString()%></label>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class=" horizontal between">
+                        <label></label>
+                        <button class=" btn-main" type="button" id="pick-btn">추천 상품 수정</button>
+                    </div>
                 </div>
             </div>
         </div>
