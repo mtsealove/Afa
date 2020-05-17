@@ -100,19 +100,19 @@ exports.createItem = (Owner, Name, Des, Addr, MDate, Price, File1, File2, File3,
     });
 }
 
-exports.updateOgItem = (id,Owner, Name, Des, Addr, MDate, Price, File1, File2, File3, Cat, Unit, Delivery, Pack, pesticide, callback) => {
+exports.updateOgItem = (id, Owner, Name, Des, Addr, MDate, Price, File1, File2, File3, Cat, Unit, Delivery, Pack, pesticide, callback) => {
     var query = `update Item set Owner='${Owner}', Name='${Name}', Des='${Des}', Addr='${Addr}', MDate='${MDate}', Pesticide=${pesticide}, 
     Price=${Price}, Cat=${Cat}, Unit='${Unit}', Delivery='${Delivery}', Pack='${Pack}' `;
-    if(File1) {
-        query+=` , File1='${File1}'`;
+    if (File1) {
+        query += ` , File1='${File1}'`;
     }
-    if(File2) {
-        query+=` , File2='${File2}'`;
+    if (File2) {
+        query += ` , File2='${File2}'`;
     }
     if (File3) {
         query += ` ,File3='${File3}'`;
     }
-    query+=` where ID=${id}`;
+    query += ` where ID=${id}`;
     connection.query(query, (e0) => {
         if (e0) {
             console.error(e0);
@@ -151,10 +151,22 @@ exports.removeItems = (ids, callback) => {
         } else {
             // 파일 삭제
             for (var i = 0; i < rs.length; i++) {
-                fs.unlinkSync(__dirname + '/public/uploads/' + rs[i].File1);
-                fs.unlinkSync(__dirname + '/public/uploads/' + rs[i].File2);
+                try {
+                    fs.unlinkSync(__dirname + '/public/uploads/' + rs[i].File1);
+                } catch (err) {
+                    console.log('file not exist');
+                }
+                try {
+                    fs.unlinkSync(__dirname + '/public/uploads/' + rs[i].File2);
+                } catch (err) {
+                    console.log('file not exist');
+                }
                 if (rs[i].File3) {
-                    fs.unlinkSync(__dirname + '/public/uploads/' + rs[i].File3);
+                    try {
+                        fs.unlinkSync(__dirname + '/public/uploads/' + rs[i].File3);
+                    } catch (err) {
+                        console.log('file not exist');
+                    }
                 }
             }
             connection.query(removeQuery, (e1) => {
@@ -329,14 +341,14 @@ exports.updateQuestionClick = (id, callback) => {
     });
 }
 
-exports.getBestItems = (addr,cat, limit, callback) => {
+exports.getBestItems = (addr, cat, limit, callback) => {
     var query = `select * from Item where Addr like '%${addr}%'`;
     if (cat != -1) {
         query += ` and Cat=${cat} `;
     }
     query += ` order by Sale desc `;
-    if(limit) {
-        query+=` limit ${limit}`;
+    if (limit) {
+        query += ` limit ${limit}`;
     }
     connection.query(query, (e0, rs) => {
         if (e0) {
@@ -435,9 +447,9 @@ exports.createOrder = (user, ItemID, Qty, Price, callback) => {
             console.error(e0);
             callback(false);
         } else {
-            const updateQuery=`update Item set Qty=Qty-${Qty} where ID=${ItemID}`;
-            connection.query(updateQuery, (e1)=>{
-                if(e1) {
+            const updateQuery = `update Item set Qty=Qty-${Qty} where ID=${ItemID}`;
+            connection.query(updateQuery, (e1) => {
+                if (e1) {
                     console.error(e1);
                     callback(false);
                 } else {
@@ -741,9 +753,9 @@ exports.getAskList = (page, callback) => {
     const start = max * page;
     const end = max * (page + 1);
     const query = `select ID, Title, Contents, Owner, date_format(Date, '%Y-%m-%d') Date, Click from Ask order by ID desc limit ${start}, ${end}`;
-    
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback([]);
         } else {
@@ -752,52 +764,52 @@ exports.getAskList = (page, callback) => {
     });
 }
 
-exports.getAskCount=(callback)=>{
-    const max=5;
-    const query=`select count(ID) cnt from Ask`;
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+exports.getAskCount = (callback) => {
+    const max = 5;
+    const query = `select count(ID) cnt from Ask`;
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(0);
         } else {
-            var cnt=parseInt(rs[0].cnt/max);
-            if(rs[0].cnt%max!=0) {
+            var cnt = parseInt(rs[0].cnt / max);
+            if (rs[0].cnt % max != 0) {
                 cnt++;
             }
             callback(cnt);
         }
     });
 }
-exports.getAskDetail=(id, callback)=>{
-    const query=`select A.ID, A.Title, A.Contents AskContents, date_format(A.Date, '%Y-%m-%d %H:%i') AskDate,
+exports.getAskDetail = (id, callback) => {
+    const query = `select A.ID, A.Title, A.Contents AskContents, date_format(A.Date, '%Y-%m-%d %H:%i') AskDate,
     R.Contents  ReceiveContents, date_format(R.Date, '%Y-%m-%d %H:%i') ReceiveDate 
    from Ask A left outer join Receive R
    on A.ReceiveID=R.ID where A.ID=${id}`;
-   connection.query(query, (e0, rs)=>{
-       if(e0) {
-           console.error(e0);
-           callback(null);
-       } else {
-           const updateQuery=`update Ask set Click=Click+1 where ID=${id}`;
-           connection.query(updateQuery, (e1)=>{
-            if(e1) {
-                console.error(e1);
-                callback(null);
-            } else {
-                callback(rs[0]);
-            }
-           });
-       }
-   })
+    connection.query(query, (e0, rs) => {
+        if (e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            const updateQuery = `update Ask set Click=Click+1 where ID=${id}`;
+            connection.query(updateQuery, (e1) => {
+                if (e1) {
+                    console.error(e1);
+                    callback(null);
+                } else {
+                    callback(rs[0]);
+                }
+            });
+        }
+    })
 }
 
-exports.getNotReceiveAsk=(callback)=>{
-    const query=`select A.ID, A.Title, A.Owner, M.Name, M.Phone, date_format(A.Date, '%Y-%m-%d %H:%i') Date
+exports.getNotReceiveAsk = (callback) => {
+    const query = `select A.ID, A.Title, A.Owner, M.Name, M.Phone, date_format(A.Date, '%Y-%m-%d %H:%i') Date
     from Ask A join Members M
     on A.Owner=M.ID
     where A.ReceiveID is null`;
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
@@ -805,28 +817,28 @@ exports.getNotReceiveAsk=(callback)=>{
         }
     });
 }
-exports.createAskReceive=(id, contents, callback)=>{
-    const insertQuery=`insert into Receive set Contents='${contents}'`;
-    connection.query(insertQuery, (e0)=>{
-        if(e0) {
+exports.createAskReceive = (id, contents, callback) => {
+    const insertQuery = `insert into Receive set Contents='${contents}'`;
+    connection.query(insertQuery, (e0) => {
+        if (e0) {
             console.error(e0);
             callback(false);
         } else {
-            const getQuery=`select ID from Receive order by ID desc limit 1`;
-            connection.query(getQuery, (e1, getRs)=>{
-                if(e1) {
+            const getQuery = `select ID from Receive order by ID desc limit 1`;
+            connection.query(getQuery, (e1, getRs) => {
+                if (e1) {
                     console.error(e1);
                     callback(false);
                 } else {
-                    const receiveID=getRs[0].ID;
-                    const updateQuery=`update Ask set ReceiveID=${receiveID} where ID=${id}`;
-                    connection.query(updateQuery, (e2)=>{
-                       if(e2) {
-                           console.error(e2);
-                           callback(false); 
-                       } else {
-                           callback(true);
-                       }
+                    const receiveID = getRs[0].ID;
+                    const updateQuery = `update Ask set ReceiveID=${receiveID} where ID=${id}`;
+                    connection.query(updateQuery, (e2) => {
+                        if (e2) {
+                            console.error(e2);
+                            callback(false);
+                        } else {
+                            callback(true);
+                        }
                     });
                 }
             });
@@ -834,16 +846,16 @@ exports.createAskReceive=(id, contents, callback)=>{
     });
 }
 
-exports.addVisiter=(date, ip)=>{
-    const query=`insert into Visit set Date='${date}', IP='${ip}'`;
-    connection.query(query, (e0)=>{
+exports.addVisiter = (date, ip) => {
+    const query = `insert into Visit set Date='${date}', IP='${ip}'`;
+    connection.query(query, (e0) => {
     });
 }
 
-exports.getVisister=(date, callback)=>{
-    const query=`select count(IP) cnt from Visit where Date='${date}'`;
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+exports.getVisister = (date, callback) => {
+    const query = `select count(IP) cnt from Visit where Date='${date}'`;
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(0);
         } else {
@@ -851,10 +863,10 @@ exports.getVisister=(date, callback)=>{
         }
     });
 }
-exports.getMonthVisiter=(month, callback)=>{
-    const query=`select count(IP) cnt from Visit where date_format(Date, '%Y-%m')='${month}'`;
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+exports.getMonthVisiter = (month, callback) => {
+    const query = `select count(IP) cnt from Visit where date_format(Date, '%Y-%m')='${month}'`;
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(0);
         } else {
@@ -863,41 +875,41 @@ exports.getMonthVisiter=(month, callback)=>{
     });
 }
 
-exports.getOrderStatus=(date, callback)=>{
-    const query1=`select count(ID) cnt from Orders where Status=1 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
-    const query2=`select count(ID) cnt from Orders where Status=2 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
-    const query3=`select count(ID) cnt from Orders where Status=3 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
-    const query4=`select count(ID) cnt from Orders where Status=4 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
-    var result={
-        rs1:0,
-        rs2:0,
-        rs3:0,
-        rs4:0
+exports.getOrderStatus = (date, callback) => {
+    const query1 = `select count(ID) cnt from Orders where Status=1 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
+    const query2 = `select count(ID) cnt from Orders where Status=2 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
+    const query3 = `select count(ID) cnt from Orders where Status=3 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
+    const query4 = `select count(ID) cnt from Orders where Status=4 and date_format(PayTime, '%Y-%m-%d')='${date}'`;
+    var result = {
+        rs1: 0,
+        rs2: 0,
+        rs3: 0,
+        rs4: 0
     };
-    connection.query(query1,(e1, rs1)=>{
-        if(e1) {
+    connection.query(query1, (e1, rs1) => {
+        if (e1) {
             console.error(e1);
             callback(result);
         } else {
-            result.rs1=rs1[0].cnt;
-            connection.query(query2, (e2, rs2)=>{
-                if(e2) {
+            result.rs1 = rs1[0].cnt;
+            connection.query(query2, (e2, rs2) => {
+                if (e2) {
                     console.error(e2);
                     callback(result);
                 } else {
-                    result.rs2=rs2[0].cnt;
-                    connection.query(query3, (e3, rs3)=>{
-                        if(e3) {
+                    result.rs2 = rs2[0].cnt;
+                    connection.query(query3, (e3, rs3) => {
+                        if (e3) {
                             console.error(e3);
                             callback(result);
                         } else {
-                            result.rs3=rs3[0].cnt;
-                            connection.query(query4, (e4, rs4)=>{
-                                if(e4) {
+                            result.rs3 = rs3[0].cnt;
+                            connection.query(query4, (e4, rs4) => {
+                                if (e4) {
                                     console.error(e4);
                                     callback(result);
                                 } else {
-                                    result.rs4=rs4[0].cnt;
+                                    result.rs4 = rs4[0].cnt;
                                     callback(result);
                                 }
                             });
@@ -909,82 +921,14 @@ exports.getOrderStatus=(date, callback)=>{
     });
 }
 
-exports.getOrderByStatus=(sts, callback)=>{
-    const query=`select II.Name ItemName, OO.* from Item II join 
+exports.getOrderByStatus = (sts, callback) => {
+    const query = `select II.Name ItemName, OO.* from Item II join 
     (select M.Name MemberName, M.MyAddr, O.* from Members M join 
     (select ItemID, MemberID, date_format(PayTime, '%Y-%m-%d') Date, Qty, Price 
     from Orders where Status=${sts}) O
     on M.ID=O.MemberID) OO on II.ID=OO.ItemID`;
-    connection.query(query, (e0, rs)=>{
-       if(e0){
-           console.error(e0);
-           callback(null);
-       }  else {
-           callback(rs);
-       }
-    });
-}
-
-exports.updateSeason=(ids=Array(), callback)=>{
-    var idStr='';
-    for(var i=0; i<ids.length; i++) {
-        idStr+=ids[i];
-        if(i!=ids.length-1) {
-            idStr+=',';
-        }
-    }
-    const trueQuery=`update Item set Season=true where ID in (${idStr})`;
-    const falseQuery=`update Item set Season=false where ID not in (${idStr})`;
-
-    connection.query(trueQuery, (e0)=>{
-        if(e0) {
-            console.error(e0);
-            callback(false);
-        } else {
-            connection.query(falseQuery, (e1)=>{
-                if(e1) {
-                    console.error(e1);
-                    callback(false);
-                } else {
-                    callback(true);
-                }
-            });
-        }
-    });
-}
-
-exports.updatePick=(ids=Array(), callback)=>{
-    var idStr='';
-    for(var i=0; i<ids.length; i++) {
-        idStr+=ids[i];
-        if(i!=ids.length-1) {
-            idStr+=',';
-        }
-    }
-    const trueQuery=`update Item set MdPick=true where ID in (${idStr})`;
-    const falseQuery=`update Item set MdPick=false where ID not in (${idStr})`;
-
-    connection.query(trueQuery, (e0)=>{
-        if(e0) {
-            console.error(e0);
-            callback(false);
-        } else {
-            connection.query(falseQuery, (e1)=>{
-                if(e1) {
-                    console.error(e1);
-                    callback(false);
-                } else {
-                    callback(true);
-                }
-            });
-        }
-    });
-}
-
-exports.getSeasonItem=(addr,callback)=>{
-    const query=`select * from Item where Addr like '%${addr}%' and Season=true order by ID desc limit 4`;
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
@@ -993,10 +937,78 @@ exports.getSeasonItem=(addr,callback)=>{
     });
 }
 
-exports.getPickItem=(addr,callback)=>{
-    const query=`select * from Item where Addr like '%${addr}%' and MdPick=true order by ID desc limit 4`;
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+exports.updateSeason = (ids = Array(), callback) => {
+    var idStr = '';
+    for (var i = 0; i < ids.length; i++) {
+        idStr += ids[i];
+        if (i != ids.length - 1) {
+            idStr += ',';
+        }
+    }
+    const trueQuery = `update Item set Season=true where ID in (${idStr})`;
+    const falseQuery = `update Item set Season=false where ID not in (${idStr})`;
+
+    connection.query(trueQuery, (e0) => {
+        if (e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            connection.query(falseQuery, (e1) => {
+                if (e1) {
+                    console.error(e1);
+                    callback(false);
+                } else {
+                    callback(true);
+                }
+            });
+        }
+    });
+}
+
+exports.updatePick = (ids = Array(), callback) => {
+    var idStr = '';
+    for (var i = 0; i < ids.length; i++) {
+        idStr += ids[i];
+        if (i != ids.length - 1) {
+            idStr += ',';
+        }
+    }
+    const trueQuery = `update Item set MdPick=true where ID in (${idStr})`;
+    const falseQuery = `update Item set MdPick=false where ID not in (${idStr})`;
+
+    connection.query(trueQuery, (e0) => {
+        if (e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            connection.query(falseQuery, (e1) => {
+                if (e1) {
+                    console.error(e1);
+                    callback(false);
+                } else {
+                    callback(true);
+                }
+            });
+        }
+    });
+}
+
+exports.getSeasonItem = (addr, callback) => {
+    const query = `select * from Item where Addr like '%${addr}%' and Season=true order by ID desc limit 4`;
+    connection.query(query, (e0, rs) => {
+        if (e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getPickItem = (addr, callback) => {
+    const query = `select * from Item where Addr like '%${addr}%' and MdPick=true order by ID desc limit 4`;
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
