@@ -118,6 +118,12 @@ label.price-cnt {
     cursor: pointer;
 }
 
+.white {
+    color: white;
+}
+.margin-20 {
+    margin: 20px;
+}
 .pay-title {
     margin-top: 30px;
     color: #777777;

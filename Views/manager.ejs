@@ -537,6 +537,18 @@
                         <button type="button" class="btn-main img-btn" data-event="event4">변경</button>
                     </div>
                     <br><br>
+                    <div class="horizontal between" style="width: 100%;">
+                        <img class="banner-manage"
+                            src="/public/<%=events[4].Path?'uploads/'+events[4].Path:'images/no_image.png'%>"
+                            id="event-img5">
+                        <form enctype="multipart/form-data" id="event-form5">
+                            <input type="file" hidden id="event5" class="event-file" data-event="5" accept="image/*"
+                                name="event_file">
+                            <input hidden value="5" name="priority">
+                        </form>
+                        <button type="button" class="btn-main img-btn" data-event="event5">변경</button>
+                    </div>
+                    <br><br>
                 </div>
                 <!-- 문의사항 관리 -->
                 <div class="manager-div" id="div-ask">

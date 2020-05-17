@@ -154,7 +154,7 @@ exports.removeItems = (ids, callback) => {
                 fs.unlinkSync(__dirname + '/public/uploads/' + rs[i].File1);
                 fs.unlinkSync(__dirname + '/public/uploads/' + rs[i].File2);
                 if (rs[i].File3) {
-                    fs.unlinkSync(__dirnames + '/public/uploads/' + rs[i].File3);
+                    fs.unlinkSync(__dirname + '/public/uploads/' + rs[i].File3);
                 }
             }
             connection.query(removeQuery, (e1) => {
